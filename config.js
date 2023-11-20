@@ -1,0 +1,1 @@
+export const BASE_URL = 'https://cookiescout2.bubbleapps.io/version-test/api/1.1/wf';

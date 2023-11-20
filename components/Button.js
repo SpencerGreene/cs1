@@ -1,18 +1,18 @@
 import { StyleSheet, View, Pressable, Text } from 'react-native';
 import AppColors from '../styles/AppColors';
 
-export default function Button({ label, theme }) {
+export default function Button({ label, theme, onPress }) {
     return (
-        theme === 'primary' ? buttonPrimary(label) : buttonDefault(label)
+        theme === 'primary' ? buttonPrimary(label, onPress) : buttonDefault(label, onPress)
     );
 }
 
-function buttonDefault(label) {
+function buttonDefault(label, onPress) {
     return (
         <View style={StyleSheet.buttonContainer}>
             <Pressable 
                 style={StyleSheet.button}
-                onPress={() => alert('you pressed the button')}
+                onPress={onPress}
             >
                 <Text style={StyleSheet.buttonLabel}>{label}</Text>
             </Pressable>
@@ -20,12 +20,12 @@ function buttonDefault(label) {
     );
 }
 
-function buttonPrimary(label) {
+function buttonPrimary(label, onPress) {
     return (
         <View style={[styles.buttonContainer]}>
             <Pressable
                 style={[styles.button]}
-                onPress={() => alert('You pressed a button.')}
+                onPress={onPress}
             >
                 <Text style={[styles.buttonLabel, { color: AppColors.surface }]}>{label}</Text>
             </Pressable>
