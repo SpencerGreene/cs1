@@ -1,14 +1,15 @@
+import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { View } from 'react-native';
-import Styles from './styles/Styles';
-import LoginPage from './pages/LoginPage';
+import MainPage from './pages/MainPage';
+
+import { AuthProvider } from './components/AuthProvider';
 
 export default function App() {
   return (
-    <View style={Styles.container}>
-      <LoginPage />
+    <AuthProvider>
       <StatusBar style="auto" />
-    </View>
+      <MainPage />
+    </AuthProvider>
   );
 }
 
