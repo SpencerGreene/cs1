@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TextInput, Image, Linking } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 
-import AppColors from '../styles/AppColors';
+import { AuthContext } from '../components/AuthProvider';
 import Styles from '../styles/Styles';
 import Button from '../components/Button';
 
@@ -11,7 +11,10 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const onPress = () => alert(`the login button was pressed with ${email} ${password}`);
+  const { login } = useContext(AuthContext);
+
+  // const onPress = () => alert(`the login button was pressed with ${email} ${password}`);
+  const onPress = () => login(email, password);
 
   return (
     <View style={Styles.column30}>

@@ -8,7 +8,7 @@ export default function MainPage() {
   const { userInfo } = useContext(AuthContext);
   return (
     <div>
-      { userInfo.access_token ? <ScoutPage /> : <LoginPage /> }
+      { userInfo?.detail?.first_text ? <ScoutPage /> : <LoginPage /> }
     </div>
   );
 }
