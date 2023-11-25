@@ -57,8 +57,6 @@ export default function LoginPage() {
   );
 }
 
-
-
 const styles = StyleSheet.create({
   bottomNotes: {
     marginTop: 60,

@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
             AsyncStorage.setItem('userInfo', JSON.stringify(loginUser));
 
             console.log('fetched', loginUser);
-            BubbleApi.printContents();
+            BubbleApi.printToken();
         } else {
             alert('Email / password incorrect');
         }
@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
         setIsLoading(true);
 
         try {
-            BubbleApi.printContents();
+            BubbleApi.printToken();
             const logoutResult = await BubbleApi.apiLogout();
 
             console.log(logoutResult);
@@ -63,8 +63,11 @@ export const AuthProvider = ({ children }) => {
             if (currentUserJSON && currentUserJSON !== "undefined") {
                 console.log(currentUserJSON);
                 const currentUser = JSON.parse(currentUserJSON);
-                setUserInfo(currentUser);
-                console.log('found user', currentUser, 'in local cache');
+                if (currentUser && currentUser.expireTime > new Date().getTime()) {
+                    setUserInfo(currentUser);
+                    BubbleApi.setApiToken(currentUser.token);
+                    console.log('found user', currentUser, 'in local cache');
+                }
             } else {
                 console.log('no cached user found')
             }
@@ -76,6 +79,7 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    // run isLoggedIn once at startup, to check for cached user
     useEffect(() => {
         isLoggedIn();
     }, []);
