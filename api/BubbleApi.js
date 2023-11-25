@@ -22,7 +22,7 @@ export default class BubbleApi {
         }
     }
 
-    setLogin(token) {
+    setToken(token) {
         this.token = token;
     }
 

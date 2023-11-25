@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, TextInput, Image, Linking } from 'react-native';
-import React, { useState, useContext } from 'react';
+import { StyleSheet, Text, View, TextInput, Image, Linking, AsyncStorage } from 'react-native';
+import React, { useState, useContext, useEffect } from 'react';
 
 import { AuthContext } from '../components/AuthProvider';
 import Styles from '../styles/Styles';
@@ -8,13 +8,25 @@ import Button from '../components/Button';
 
 export default function LoginPage() {
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [ email, setEmail ] = useState('');
+  const [ password, setPassword ] = useState('');
 
   const { login } = useContext(AuthContext);
 
   // const onPress = () => alert(`the login button was pressed with ${email} ${password}`);
   const onPress = () => login(email, password);
+
+  useEffect(() => {
+    // see if already logged in
+    AsyncStorage.getItem('currentUser')
+      .then(savedUser => {
+        if (savedUser) {
+          const user = JSON.parse(savedUser);
+          setCurrentUser(user);
+          BubbleApi.setToken(user.token);
+        }
+      });
+  });
 
   return (
     <View style={Styles.column30}>
@@ -41,7 +53,7 @@ export default function LoginPage() {
           </View>
         </View>
         <View style={Styles.groupCenter}>
-          <Button label="Log in" theme="primary" onPress={onPress}/>
+          <Button label="Log in" theme="primary" onPress={onPress} />
         </View>
       </View>
       <View style={styles.bottomNotes} id="bottomNotes">
