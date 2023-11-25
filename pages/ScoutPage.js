@@ -12,9 +12,8 @@ export default function ScoutPage() {
       <Image style={styles.image} source={require("../assets/loginlogo.jpg")} />
       <View id="textBlock">
         <View style={Styles.groupLeft}>
-          <Text style={[Styles.mediumTitle, styles.loginTitle]}>Welcome {userInfo.detail?.first_text}</Text>
+          <Text style={[Styles.mediumTitle, styles.loginTitle]}>Welcome {userInfo.name}</Text>
           <Button label="Log out" theme="primary" onPress={logout}/>
-
         </View>
       </View>
     </View>

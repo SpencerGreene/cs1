@@ -8,7 +8,7 @@ export default function MainPage() {
   const { userInfo } = useContext(AuthContext);
   return (
     <div>
-      { userInfo?.detail?.first_text ? <ScoutPage /> : <LoginPage /> }
+      { userInfo?.firstName ? <ScoutPage /> : <LoginPage /> }
     </div>
   );
 }
