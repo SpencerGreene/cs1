@@ -6,7 +6,7 @@ export default class BlueAllianceApi {
     static header = { headers: { "X-TBA-Auth-Key": URL.TBA_KEY } };
     static tbaUrl = URL.TBA_URL;
 
-    static async fetchEvent(eventKey) {
+    static async fetchMatches(eventKey) {
         const matchArray = await this._fetchData(`event/${eventKey}/matches/simple`);
 
         let matchDict = {};
@@ -17,8 +17,10 @@ export default class BlueAllianceApi {
             }
         });
 
-        console.log(matchDict);
+        matchDict.fetchedDate = new Date();
+        matchDict.eventKey = eventKey;
         return matchDict;
+        
     }
 
     // private functions
@@ -30,7 +32,7 @@ export default class BlueAllianceApi {
             );
             return data;
         } catch (err) {
-            console.log(`_fetchData fail ${thingType} ${thingID}`);
+            console.log(`_fetchData fail ${endpoint}`);
         }
     }
 

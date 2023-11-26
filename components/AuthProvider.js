@@ -2,15 +2,19 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useEffect, useState } from 'react';
 import BubbleApi from '../api/BubbleApi';
+import { LOCALKEYS } from '../config';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [userInfo, setUserInfo] = useState({});
+    const [appVariables, setAppVariables] = useState({});
+    const [eventMatches, setEventMatches] = useState({});
+    const [colorDict, setColorDict] = useState({});
+    const [lastChanged, setLastChanged] = useState({});
+
     const [isLoading, setIsLoading] = useState(false);
     const [splashLoading, setSplashLoading] = useState(false);
-
-    // const api = new BubbleApi();
 
     const login = async (email, password) => {
         setIsLoading(true);
@@ -21,15 +25,14 @@ export const AuthProvider = ({ children }) => {
             setUserInfo(loginUser);
             await AsyncStorage.setItem('userInfo', JSON.stringify(loginUser));
 
-            const userDetails = await BubbleApi.fetchUser(loginUser.userID);
+            const userDetails = await BubbleApi.apiGetUser(loginUser.userID);
             loginUser = { ...loginUser, ...userDetails };
 
             setUserInfo(loginUser);
             BubbleApi.setApiToken(loginUser.token);
-            AsyncStorage.setItem('userInfo', JSON.stringify(loginUser));
+            await AsyncStorage.setItem('userInfo', JSON.stringify(loginUser));
 
-            console.log('fetched', loginUser);
-            BubbleApi.printToken();
+            console.log('fetched user', loginUser);
         } else {
             alert('Email / password incorrect');
         }
@@ -41,17 +44,24 @@ export const AuthProvider = ({ children }) => {
         setIsLoading(true);
 
         try {
-            BubbleApi.printToken();
+            // BubbleApi.printToken(); // debug
             const logoutResult = await BubbleApi.apiLogout();
-
             console.log(logoutResult);
-            AsyncStorage.removeItem('userInfo');
+
+            console.log({LOCALKEYS});
+            for (const [key, value] of Object.entries(LOCALKEYS)) {
+                AsyncStorage.removeItem(value);
+            }
+            setAppVariables({});
+            setColorDict({});
             setUserInfo({});
-            setIsLoading(false);
+            setEventMatches({});
+
         } catch (err) {
             console.log(`logout error ${err}`);
-            setIsLoading(false);
         };
+        setUserInfo({});
+        setIsLoading(false);
     };
 
     const isLoggedIn = async () => {
@@ -61,12 +71,11 @@ export const AuthProvider = ({ children }) => {
             const currentUserJSON = await AsyncStorage.getItem('userInfo');
 
             if (currentUserJSON && currentUserJSON !== "undefined") {
-                console.log(currentUserJSON);
                 const currentUser = JSON.parse(currentUserJSON);
                 if (currentUser && currentUser.expireTime > new Date().getTime()) {
                     setUserInfo(currentUser);
                     BubbleApi.setApiToken(currentUser.token);
-                    console.log('found user', currentUser, 'in local cache');
+                    console.log('user found in cache', currentUser);
                 }
             } else {
                 console.log('no cached user found')
@@ -89,6 +98,14 @@ export const AuthProvider = ({ children }) => {
             value={{
                 isLoading,
                 userInfo,
+                appVariables,
+                setAppVariables,
+                eventMatches,
+                setEventMatches,
+                colorDict,
+                setColorDict,
+                lastChanged,
+                setLastChanged,
                 splashLoading,
                 login,
                 logout,

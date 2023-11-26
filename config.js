@@ -3,3 +3,10 @@ export const DATA_URL = 'https://cookiescout2.bubbleapps.io/version-test/api/1.1
 
 export const TBA_KEY = 'QMX6lOKtgvG1vLLPDSt2yvsPCVNV77FOFXreWkcMX3WXv0CSPH8EiBeuD3gjWAvL';
 export const TBA_URL = 'https://www.thebluealliance.com/api/v3';
+
+export const LOCALKEYS = {
+    APPVAR: 'appVariables',
+    COLORDICT: 'colorDict',
+    EVENTMATCHES: 'eventMatches',
+    USERINFO: 'userInfo',
+};

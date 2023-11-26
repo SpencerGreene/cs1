@@ -6,6 +6,7 @@ export default class BubbleApi {
     static header = '';
     static dataUrl = URL.DATA_URL;
     static workflowUrl = URL.WORKFLOW_URL;
+    static colorDict = {};
 
     static setApiToken(token) {
         this.apiToken = token;
@@ -19,24 +20,21 @@ export default class BubbleApi {
                 { email, password }
             );
 
-            const expireSeconds = data?.response?.expires;
-
             const userInfo = {
                 userID: data?.response?.user_id,
                 token: data?.response?.token,
                 expireTime: new Date().getTime() + data?.response?.expires * 1000,
             };
 
-            console.log('expires: ', Date(userInfo.expireTime).toLocaleString());
+            console.log('received token expires: ', Date(userInfo.expireTime).toLocaleString());
 
             return userInfo;
         } catch (err) {
-            console.log(`apiLogin fail ${email}`);
+            console.error(`apiLogin fail ${email}`);
         }
     }
 
     static async apiLogout() {
-        console.log(this.apiToken);
         try {
             const { data } = await axios.post(
                 `${this.workflowUrl}/logout`,
@@ -45,25 +43,75 @@ export default class BubbleApi {
             );
             return data.response;
         } catch (err) {
-            console.log(`apiLogout fail`);
+            console.error(`apiLogout fail`);
         }
     }
 
-    static async fetchUser(userID) {
+    static async apiGetUser(userID) {
         const rawUser = await this._fetchData('user', userID);
         return {
             firstName: rawUser.first_text,
             lastName: rawUser.last_text,
             name: rawUser.first_last_text,
-            team: rawUser.teamnumt_text,
+            teamNumT: rawUser.teamnumt_text,
+            fetchedDate: new Date(),
         }
     }
 
-    static async getAppDefaults() {
-        const { appVariables, colorDict } = await this._fetchAppVariables();
+    static async apiGetAppVariables() {
+        let rawAppVariables = await this._fetchWorkflow('appVariables');
+        const appVariables = {
+            defaultColorIDs: {
+                active: rawAppVariables.appVariables.default_coloractive_custom_colors,
+                flash: rawAppVariables.appVariables.default_colorflash_custom_colors,
+                inactive: rawAppVariables.appVariables.default_colorinactive_custom_colors,
+                selected: rawAppVariables.appVariables.default_colorselected_custom_colors,
+            },
+            gameID: rawAppVariables.appVariables.default_game_custom_game,
+            eventKey: rawAppVariables.appVariables.default_event_text,
+            defaultMatchType: rawAppVariables.appVariables.default_match_type_option_matchtype,
+            defaultMatchNum: rawAppVariables.appVariables.default_match_number_number,
+            teamNumT: rawAppVariables.appVariables.analyzeteamnumt_text,
+        };
 
-        console.log(appVariables);
-        return { appVariables, colorDict };
+        appVariables.game = await this._fetchGame(appVariables.gameID);
+        appVariables.fetchedDate = new Date();
+        
+        return appVariables;
+    }
+
+    static async apiGetLastChanged() {
+        const rawLastChanged = await this._fetchWorkflow('lastChanged');
+        return rawLastChanged;
+    }
+
+    static async apiGetColorDict(teamNumT) {
+        const rawColors = await this._searchData(
+            'colors',
+            [{
+                key: "deleted", 
+                constraint_type: "not equal",
+                value: "yes"
+            }]
+        );
+        const rawColorArray = rawColors.results;
+
+        let colorDict = {};
+        rawColorArray.forEach((rawColor) => {
+            const analyzeTeamNumT = rawColor.analyzeteamnumt_text;
+            if (!analyzeTeamNumT || analyzeTeamNumT === undefined || analyzeTeamNumT === teamNumT)
+                colorDict[rawColor._id] = {
+                    hexColor: rawColor.hexcolor_text,
+                    contrastColor: rawColor.contrastcolor_option_textcolor,
+                    name: rawColor.name_text,
+                    analyzeTeamNumT
+                }
+            });
+        colorDict.fetchedDate = new Date();
+        colorDict.teamNumT = teamNumT;
+
+        this.colorDict = colorDict;
+        return colorDict;
     }
 
     // public debug functions
@@ -81,7 +129,7 @@ export default class BubbleApi {
             );
             return data.response;
         } catch (err) {
-            console.log(`_fetchData fail ${thingType} ${thingID}`);
+            console.error(`_fetchData fail ${thingType} ${thingID}`);
         }
     }
 
@@ -94,73 +142,96 @@ export default class BubbleApi {
             );
             return data.response;
         } catch (err) {
-            console.log(`_searchData fail ${thingType} ${constraints}`);
+            console.error(`_searchData fail ${thingType} ${constraints}`);
         }
     }
 
     static async _fetchWorkflow(endpoint) {
-        console.log('workflow with token', this.apiToken);
         try {
-            const { data } = await axios.post(
+            const { data } = await axios.get(
                 `${this.workflowUrl}/${endpoint}`,
-                {},
                 this.header
             );
             return data.response;
         } catch (err) {
-            console.log(`_fetchWorkflow fail ${endpoint}`);
+            console.error(`_fetchWorkflow fail ${endpoint}`);
         }
     }
 
-    static async _fetchAppVariables() {
-        let res = await this._fetchWorkflow('appVariables');
-        const appVariables = {
-            defaultColorIDs: {
-                active: res.appVariables.default_coloractive_custom_colors,
-                flash: res.appVariables.default_colorflash_custom_colors,
-                inactive: res.appVariables.default_colorinactive_custom_colors,
-                selected: res.appVariables.default_colorselected_custom_colors,
-            },
-            gameID: res.appVariables.default_game_custom_game,
-            eventKey: res.appVariables.default_event_text,
-            defaultMatchType: res.appVariables.default_match_type_option_matchtype,
-            defaultMatchNum: res.appVariables.default_match_number_number,
+    static async _fetchGame(gameID) {
+        const rawGame = await this._fetchData('game', gameID);
+        let game = {
+            season: rawGame.season_text,
+            autoTeleSeconds: rawGame.autoteleseconds_number,
+            name: rawGame.name_text,
+            id: gameID,
         };
 
-        const colorDict = await this._fetchColorDict();
-        appVariables.defaultColors = {
-            active: colorDict[appVariables.defaultColorIDs.active],
-            flash: colorDict[appVariables.defaultColorIDs.flash],
-            inactive: colorDict[appVariables.defaultColorIDs.inactive],
-            selected: colorDict[appVariables.defaultColorIDs.selected],
-        };
-
-        appVariables.game = await this._fetchData('game', appVariables.gameID);
-
-        return { appVariables, colorDict };
-    }
-
-    static async _fetchColorDict() {
-        const colors = await this._searchData(
-            'colors',
-            [{
-                key: "deleted", 
-                constraint_type: "not equal",
-                value: "yes"
-            }]
+        const counterIDs = rawGame.counters_list_custom_counter;
+        game.counterDefs = await Promise.all(
+            counterIDs.map(id => this._fetchCounterDefinition(id))
         );
-        const colorArray = colors.results;
-
-        let colorDict = {};
-        colorArray.forEach((color, index) => {
-            colorDict[color._id] = {
-                hexColor: color.hexcolor_text,
-                contrastColor: color.contrastcolor_option_textcolor,
-                name: color.name_text,
-            }
-        });
-        return colorDict;
+        game.fetchedDate = new Date();
+        
+        return game;
     }
+
+    static async _fetchCounterDefinition(counterID) {
+        const rawCounter = await this._fetchData('counterdefinition', counterID);
+        let counterDef = {
+            name: rawCounter.name_text,
+            scoutDisplayName: rawCounter.scoutdisplayname__boolean,
+            gamePhases: rawCounter.gamephases_list_option_gamephase,
+            sortOrder: rawCounter.sequence_number,
+            id: counterID,
+        };
+
+        const conditionIDs = rawCounter.conditions_list_custom_gamechoice;
+        counterDef.conditions = await Promise.all(
+            conditionIDs.map(id => this._fetchCounterCondition(id))
+        );
+
+        return counterDef;
+    }
+
+    static async _fetchCounterCondition(counterConditionID) {
+        const rawCondition = await this._fetchData('countercondition', counterConditionID);
+        let counterCondition = {
+            sortOrder: rawCondition.typesortorder_number,
+            name: rawCondition.display_text,
+            type: rawCondition.type_option_condition_type,
+            id: counterConditionID,
+        };
+
+        const optionIDs = rawCondition.choices_list_custom_counterconditionoption;
+
+        counterCondition.options = await Promise.all(
+            optionIDs.map(id => this._fetchCounterConditionOption(id))
+        );
+
+        return counterCondition;
+    }
+
+    static async _fetchCounterConditionOption(optionID) {
+        const rawOption = await this._fetchData('counterconditionoption', optionID);
+        let option = {
+            colorIDs: {
+                active: rawOption.coloractive_custom_colors,
+                flash: rawOption.colorflash_custom_colors,
+                inactive: rawOption.colorinactive_custom_colors,
+                selected: rawOption.colorselected_custom_colors,
+            },
+            name: rawOption.name_text,
+            height: rawOption.height_option_buttonheight,
+            display: rawOption.display_text,
+            imageURL: rawOption.image_image,
+            sortOrder: rawOption.sortorder_number,
+            id: optionID,
+        }
+
+        return option;
+    }
+
 
 }
 
