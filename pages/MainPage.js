@@ -1,5 +1,7 @@
 import React, { useContext } from 'react';
+import { View } from 'react-native';
 
+import Styles from '../styles/Styles';
 import ScoutPage from './ScoutPage';
 import LoginPage from './LoginPage';
 import { AuthContext } from '../components/AuthProvider';
@@ -7,8 +9,8 @@ import { AuthContext } from '../components/AuthProvider';
 export default function MainPage() {
   const { userInfo } = useContext(AuthContext);
   return (
-    <div>
+    <View style={Styles.container}>
       { userInfo?.firstName ? <ScoutPage /> : <LoginPage /> }
-    </div>
+    </View>
   );
 }

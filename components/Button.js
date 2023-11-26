@@ -56,6 +56,6 @@ const styles = StyleSheet.create({
     buttonLabel: {
         color: AppColors.surface,
         fontSize: 15,
-        fontWeight: 600,
+        fontWeight: '600',
     }
 })

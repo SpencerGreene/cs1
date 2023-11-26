@@ -11,7 +11,7 @@ export default StyleSheet.create({
     mediumTitle: {
         fontSize: 23,
         color: AppColors.text,
-        fontWeight: 700
+        fontWeight: '700'
     },
     column30: {
         paddingLeft: 30,
@@ -25,7 +25,7 @@ export default StyleSheet.create({
     },
     inputLabel: {
         fontSize: 13,
-        fontWeight: 600,
+        fontWeight: '600',
         color: AppColors.bodyText,
         marginBottom: 2,
     },    
@@ -35,7 +35,7 @@ export default StyleSheet.create({
         lineHeight: 20
     },
     inputView: {
-        width: "100%",
+        minWidth: "100%",
         height: 45,
         marginBottom: 20,
         alignItems: "left",
@@ -43,6 +43,7 @@ export default StyleSheet.create({
     textInput: {
         height: 40,
         flex: 1,
+        minWidth: "100%",
         paddingHorizontal: 10,
         marginLeft: 0,
         borderWidth: 1,
