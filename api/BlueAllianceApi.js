@@ -1,10 +1,10 @@
 import axios from 'axios';
-import * as URL from '../config.js';
+import { TBA_KEY, TBA_URL } from '../config.js';
 
 export default class BlueAllianceApi {
-    static apiToken = URL.TBA_KEY;
-    static header = { headers: { "X-TBA-Auth-Key": URL.TBA_KEY } };
-    static tbaUrl = URL.TBA_URL;
+    static apiToken = TBA_KEY;
+    static header = { headers: { "X-TBA-Auth-Key": TBA_KEY } };
+    static tbaUrl = TBA_URL;
 
     static async fetchMatches(eventKey) {
         const matchArray = await this._fetchData(`event/${eventKey}/matches/simple`);

@@ -1,11 +1,11 @@
 import axios from 'axios';
-import * as URL from '../config.js';
+import { DATA_URL, WORKFLOW_URL } from '../config.js';
 
 export default class BubbleApi {
     static apiToken = '';
     static header = '';
-    static dataUrl = URL.DATA_URL;
-    static workflowUrl = URL.WORKFLOW_URL;
+    static dataUrl = DATA_URL;
+    static workflowUrl = WORKFLOW_URL;
     static colorDict = {};
 
     static setApiToken(token) {
@@ -16,7 +16,7 @@ export default class BubbleApi {
     static async apiLogin(email, password) {
         try {
             const { data } = await axios.post(
-                `${URL.WORKFLOW_URL}/login`,
+                `${this.workflowUrl}/login`,
                 { email, password }
             );
 
