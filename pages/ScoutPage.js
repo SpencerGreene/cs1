@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, Image } from 'react-native';
+import { StyleSheet, Text, View, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import React, { useContext, useEffect } from 'react';
@@ -9,6 +9,7 @@ import Styles from '../styles/Styles';
 import { LOCALKEYS } from '../config';
 import { AuthContext } from '../components/AuthProvider';
 import BlueAllianceApi from '../api/BlueAllianceApi';
+import Header from '../components/Header';
 
 export default function ScoutPage() {
     const {
@@ -136,9 +137,9 @@ export default function ScoutPage() {
     }, [userInfo.teamNumT]); // Trigger only when appVariables changes
 
     return (
-        <View style={Styles.column30}>
-            <Image style={styles.image} source={require("../assets/loginlogo.jpg")} />
-            <View id="textBlock">
+        <View>
+            <Header />
+            <View id="textBlock" style={{backgroundColor: '#000078'}}>
                 <View style={Styles.groupLeft}>
                     <Text style={[Styles.mediumTitle, styles.loginTitle]}>Welcome {userInfo.name}</Text>
                     <Text style={[Styles.bodyText]}>Event: {appVariables.eventKey}</Text>

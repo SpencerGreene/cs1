@@ -7,7 +7,7 @@ import { AuthProvider } from './components/AuthProvider';
 export default function App() {
   return (
     <AuthProvider>
-      <StatusBar style="auto" />
+      <StatusBar style="auto" barStyle="dark-content" />
       <MainPage />
     </AuthProvider>
   );

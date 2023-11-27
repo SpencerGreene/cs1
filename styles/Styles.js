@@ -1,12 +1,13 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, StatusBar } from 'react-native';
 import AppColors from './AppColors';
 
 export default StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: AppColors.background,
+        // backgroundColor: '#780000',
         alignItems: 'left',
-        justifyContent: 'center',
+        marginTop: StatusBar.currentHeight || 0,
     },
     mediumTitle: {
         fontSize: 23,
@@ -16,6 +17,7 @@ export default StyleSheet.create({
     column30: {
         paddingLeft: 30,
         paddingRight: 30,
+        minWidth: "100%",
     },
     groupLeft: {
         alignItems: 'left',

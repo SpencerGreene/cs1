@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { View } from 'react-native';
+import { View, SafeAreaView } from 'react-native';
 
 import Styles from '../styles/Styles';
 import ScoutPage from './ScoutPage';
@@ -9,8 +9,8 @@ import { AuthContext } from '../components/AuthProvider';
 export default function MainPage() {
   const { userInfo } = useContext(AuthContext);
   return (
-    <View style={Styles.container}>
+    <SafeAreaView style={Styles.container}>
       { userInfo?.firstName ? <ScoutPage /> : <LoginPage /> }
-    </View>
+    </SafeAreaView>
   );
 }

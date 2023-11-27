@@ -28,6 +28,7 @@ export default function LoginPage() {
                             id="email"
                             style={Styles.textInput}
                             onChangeText={(email) => setEmail(email)}
+                            autoCapitalize="none"
                         />
                     </View>
                     <Text style={Styles.inputLabel}>Password</Text>
