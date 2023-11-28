@@ -6,7 +6,7 @@ export default class BlueAllianceApi {
     static header = { headers: { "X-TBA-Auth-Key": TBA_KEY } };
     static tbaUrl = TBA_URL;
 
-    static async fetchMatches(eventKey) {
+    static async fetchEventInfo(eventKey) {
         const matchArray = await this._fetchData(`event/${eventKey}/matches/simple`);
 
         let matchDict = {};

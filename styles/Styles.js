@@ -50,5 +50,29 @@ export default StyleSheet.create({
         marginLeft: 0,
         borderWidth: 1,
         borderRadius: 5,
-    }
+    },
+    scoutContainer: {
+        flex: 1,
+        minWidth: "100%",
+        paddingHorizontal: 30,
+        minHeight: 480,
+        backgroundColor: '#c0c0f0',
+    },
+    dropdownContent: {
+        width: 150, // Adjust the width as needed
+        marginTop: 70, // Adjust the marginTop to position it below the profile image
+        marginRight: 20,
+        backgroundColor: '#fff',
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: AppColors.lightGray,
+        overflow: 'hidden',
+    },
+    dropdownItem: {
+        padding: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+        width: '100%',
+        alignItems: 'center',
+    },
 });

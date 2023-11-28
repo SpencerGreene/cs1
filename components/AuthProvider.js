@@ -9,7 +9,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [userInfo, setUserInfo] = useState({});
     const [appVariables, setAppVariables] = useState({});
-    const [eventMatches, setEventMatches] = useState({});
+    const [eventInfo, setEventInfo] = useState({});
     const [colorDict, setColorDict] = useState({});
     const [lastChanged, setLastChanged] = useState({});
 
@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
             setAppVariables({});
             setColorDict({});
             setUserInfo({});
-            setEventMatches({});
+            setEventInfo({});
 
         } catch (err) {
             console.log(`logout error ${err}`);
@@ -100,8 +100,8 @@ export const AuthProvider = ({ children }) => {
                 userInfo,
                 appVariables,
                 setAppVariables,
-                eventMatches,
-                setEventMatches,
+                eventInfo,
+                setEventInfo,
                 colorDict,
                 setColorDict,
                 lastChanged,

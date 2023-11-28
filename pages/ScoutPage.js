@@ -15,7 +15,7 @@ export default function ScoutPage() {
     const {
         userInfo, logout,
         appVariables, setAppVariables,
-        eventMatches, setEventMatches,
+        eventInfo, setEventInfo,
         colorDict, setColorDict,
         lastChanged, setLastChanged,
     } = useContext(AuthContext);
@@ -63,47 +63,47 @@ export default function ScoutPage() {
         populateAppVariables();
     }, []); // Empty dependency array to run only on mount
 
-    const loadEventMatchesApi = async eventKey => {
-        const apiEventMatches = await BlueAllianceApi.fetchMatches(eventKey);
-        setEventMatches(apiEventMatches);
+    const loadEventInfoApi = async eventKey => {
+        const apiEventInfo = await BlueAllianceApi.fetchEventInfo(eventKey);
+        setEventInfo(apiEventInfo);
 
         // Store it in AsyncStorage for future use
-        await AsyncStorage.setItem(LOCALKEYS.EVENTMATCHES, JSON.stringify(apiEventMatches));
-        console.log('event matches loaded from api', apiEventMatches);
+        await AsyncStorage.setItem(LOCALKEYS.EVENTMATCHES, JSON.stringify(apiEventInfo));
+        console.log('eventInfo loaded from api', apiEventInfo);
     };
 
     // get eventMatches from cache or API - depends on eventKey
     useEffect(() => {
-        const populateMatches = async () => {
+        const populateEvent = async () => {
             if (!appVariables || !appVariables.eventKey) return;
 
             // 1 - already in React state
-            if (eventMatches
-                    && eventMatches.eventKey === appVariables.eventKey
-                    && eventMatches[1]
-                    && eventMatches[1].alliances) {
-                console.log('eventMatches already in memory', eventMatches);
+            if (eventInfo
+                    && eventInfo.eventKey === appVariables.eventKey
+                    && eventInfo[1]
+                    && eventInfo[1].alliances) {
+                console.log('eventInfo already in memory', eventInfo);
                 return;
             }
 
             // 2 - already in cache
-            const storedEventMatches = await AsyncStorage.getItem(LOCALKEYS.EVENTMATCHES);
-            if (storedEventMatches) {
-                const parsedEventMatches = JSON.parse(storedEventMatches);
-                if (parsedEventMatches.eventKey === appVariables.eventKey
-                        && parsedEventMatches[1]
-                        && parsedEventMatches[1].alliances) {
-                    setEventMatches(parsedEventMatches);
-                    console.log('eventMatches in cache', parsedEventMatches);
+            const storedEventInfo = await AsyncStorage.getItem(LOCALKEYS.EVENTMATCHES);
+            if (storedEventInfo) {
+                const parsedEventInfo = JSON.parse(storedEventInfo);
+                if (parsedEventInfo.eventKey === appVariables.eventKey
+                        && parsedEventInfo[1]
+                        && parsedEventInfo[1].alliances) {
+                    setEventInfo(parsedEventInfo);
+                    console.log('eventInfo in cache', parsedEventInfo);
                     return;
                 }
             }
 
             // not found in cache
-            await loadEventMatchesApi(appVariables.eventKey);
+            await loadEventInfoApi(appVariables.eventKey);
         };
 
-        populateMatches();
+        populateEvent();
     }, [appVariables.eventKey]); // Trigger only when event changes
 
     // get colorDict from cache or API - depends on userInfo.teamNumT
@@ -139,17 +139,16 @@ export default function ScoutPage() {
     return (
         <View>
             <Header />
-            <View id="textBlock" style={{backgroundColor: '#000078'}}>
+            <View id="textBlock" style={Styles.scoutContainer}>
                 <View style={Styles.groupLeft}>
                     <Text style={[Styles.mediumTitle, styles.loginTitle]}>Welcome {userInfo.name}</Text>
                     <Text style={[Styles.bodyText]}>Event: {appVariables.eventKey}</Text>
                     <Text style={[Styles.bodyText]}>
-                        Match 1 blue: {eventMatches[1]?.alliances?.blue?.team_keys?.join(', ')}
+                        Match 1 blue: {eventInfo[1]?.alliances?.blue?.team_keys?.join(', ')}
                     </Text>
                     <Text style={[Styles.bodyText]}
-                    >Match 1 red: {eventMatches[1]?.alliances?.red?.team_keys?.join(', ')}
+                    >Match 1 red: {eventInfo[1]?.alliances?.red?.team_keys?.join(', ')}
                     </Text>
-                    <Button label="Log out" theme="primary" onPress={logout} />
                 </View>
             </View>
         </View>
