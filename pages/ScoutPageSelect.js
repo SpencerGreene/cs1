@@ -13,7 +13,7 @@ export default function ScoutPageSelect() {
         userInfo, 
         logout,
         appVariables,
-        eventMatches,
+        eventInfo,
     } = useContext(AuthContext);
 
     return (
@@ -24,10 +24,10 @@ export default function ScoutPageSelect() {
                     <Text style={[Styles.mediumTitle, styles.loginTitle]}>Welcome {userInfo.name}</Text>
                     <Text style={[Styles.bodyText]}>Event: {appVariables.eventKey}</Text>
                     <Text style={[Styles.bodyText]}>
-                        Match 1 blue: {eventMatches[1]?.alliances?.blue?.team_keys?.join(', ')}
+                        Match 1 blue: {eventInfo[1]?.alliances?.blue?.team_keys?.join(', ')}
                     </Text>
-                    <Text style={[Styles.bodyText]}
-                    >Match 1 red: {eventMatches[1]?.alliances?.red?.team_keys?.join(', ')}
+                    <Text style={[Styles.bodyText]}>
+                        Match 1 red: {eventInfo[1]?.alliances?.red?.team_keys?.join(', ')}
                     </Text>
                     <Button label="Log out" theme="primary" onPress={logout} />
                 </View>

@@ -7,19 +7,27 @@ export default class BlueAllianceApi {
     static tbaUrl = TBA_URL;
 
     static async fetchEventInfo(eventKey) {
-        const matchArray = await this._fetchData(`event/${eventKey}/matches/simple`);
+        const [event, matchArray] = await Promise.all([ 
+            this._fetchData(`event/${eventKey}`),
+            this._fetchData(`event/${eventKey}/matches/simple`),
+        ]);
 
-        let matchDict = {};
+        let matches = {};
         matchArray.forEach((match, index) => {
             const { comp_level, match_number } = match;
             if (comp_level === 'qm') {
-                matchDict[match_number] = match;
+                matches[match_number] = match;
             }
         });
 
-        matchDict.fetchedDate = new Date();
-        matchDict.eventKey = eventKey;
-        return matchDict;
+        const eventInfo = {
+            eventKey,
+            event,
+            matches,
+            fetchedDate: new Date(),
+        };
+
+        return eventInfo;
         
     }
 

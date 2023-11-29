@@ -6,12 +6,9 @@ import Button from '../components/Button';
 import Styles from '../styles/Styles';
 import { AuthContext } from '../components/AuthProvider';
 
-export default function ScoutPagePhases() {
+export default function ScoutPageGame() {
     const {
         userInfo, 
-        logout,
-        appVariables,
-        eventMatches,
     } = useContext(AuthContext);
 
     return (

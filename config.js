@@ -7,7 +7,7 @@ export const TBA_URL = 'https://www.thebluealliance.com/api/v3';
 export const LOCALKEYS = {
     APPVAR: 'appVariables',
     COLORDICT: 'colorDict',
-    EVENTMATCHES: 'eventMatches',
+    EVENT: 'eventInfo',
     USERINFO: 'userInfo',
 };
 
@@ -33,7 +33,7 @@ export const PHASES = {
     // arriving here: select clear, no scout
     select: {
         display: 'Select Match & Team',
-        forwardLabel: 'Confirm selection',
+        forwardLabel: 'Confirm selection >>>',
         forwardActions: [ACTIONS.makeScout, ACTIONS.clearConditions],
         showClock: false,
     },
@@ -41,9 +41,9 @@ export const PHASES = {
     // arriving here: select valid, scout valid, no counts, conditions clear
     pregame: {
         display: 'Pregame',
-        backLabel: 'Cancel',
+        backLabel: '<<< Cancel',
         backActions: [ACTIONS.deleteScout, ACTIONS.clearMatchTeam],
-        forwardLabel: 'Start Game',
+        forwardLabel: 'Start Game >>>',
         forwardActions: [ACTIONS.startClock], // clearConditions already done
         endTime: null,
         showClock: false,
@@ -52,9 +52,9 @@ export const PHASES = {
     // arriving here: conditions clear (forward) or preserved w max-reload (back)
     auto: {
         display: 'Auto',
-        backLabel: 'Pregame',
+        backLabel: '<<< Pregame',
         backActions: [ACTIONS.deleteCounts, ACTIONS.clearConditions],
-        forwardLabel: 'Teleop',
+        forwardLabel: 'Teleop >>>',
         forwardActions: [ACTIONS.reloadMaxed],
         endTime: 135,
         showClock: true,
@@ -63,9 +63,9 @@ export const PHASES = {
     // arriving here: conditions preserved w max-reload (forward or back)
     teleop: {
         display: 'Teleop',
-        backLabel: 'Auto',
+        backLabel: '<<< Auto',
         backActions: [ACTIONS.reloadMaxed],
-        forwardLabel: 'Endgame',
+        forwardLabel: 'Endgame >>>',
         backActions: [ACTIONS.reloadMaxed],
         endTime: 30,
         showClock: true,
@@ -73,9 +73,9 @@ export const PHASES = {
 
     endgame: {
         display: 'Endgame',
-        backLabel: 'Teleop',
+        backLabel: '<<< Teleop',
         backActions: [ACTIONS.reloadMaxed],
-        forwardLabel: 'Submit',
+        forwardLabel: 'Submit >>>',
         endTime: -20, // 20 seconds after match, auto jump to submit
         showClock: true,
     },

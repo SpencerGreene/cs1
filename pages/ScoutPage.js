@@ -2,7 +2,6 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import React, { useContext, useEffect } from 'react';
-import Button from '../components/Button';
 import BubbleApi from '../api/BubbleApi';
 
 import Styles from '../styles/Styles';
@@ -13,7 +12,7 @@ import Header from '../components/Header';
 
 export default function ScoutPage() {
     const {
-        userInfo, logout,
+        userInfo,
         appVariables, setAppVariables,
         eventInfo, setEventInfo,
         colorDict, setColorDict,
@@ -68,35 +67,35 @@ export default function ScoutPage() {
         setEventInfo(apiEventInfo);
 
         // Store it in AsyncStorage for future use
-        await AsyncStorage.setItem(LOCALKEYS.EVENTMATCHES, JSON.stringify(apiEventInfo));
+        await AsyncStorage.setItem(LOCALKEYS.EVENT, JSON.stringify(apiEventInfo));
         console.log('eventInfo loaded from api', apiEventInfo);
     };
 
-    // get eventMatches from cache or API - depends on eventKey
+    // get eventInfo from cache or API - depends on eventKey
     useEffect(() => {
+        const validEvent = event => (
+            event 
+            && event.eventKey === appVariables.eventKey
+            && event.matches
+            && event.matches[1]
+            && event.matches[1].alliances
+        );
+
         const populateEvent = async () => {
             if (!appVariables || !appVariables.eventKey) return;
 
             // 1 - already in React state
-            if (eventInfo
-                    && eventInfo.eventKey === appVariables.eventKey
-                    && eventInfo[1]
-                    && eventInfo[1].alliances) {
+            if (validEvent(eventInfo)) {
                 console.log('eventInfo already in memory', eventInfo);
                 return;
             }
 
             // 2 - already in cache
-            const storedEventInfo = await AsyncStorage.getItem(LOCALKEYS.EVENTMATCHES);
-            if (storedEventInfo) {
-                const parsedEventInfo = JSON.parse(storedEventInfo);
-                if (parsedEventInfo.eventKey === appVariables.eventKey
-                        && parsedEventInfo[1]
-                        && parsedEventInfo[1].alliances) {
-                    setEventInfo(parsedEventInfo);
-                    console.log('eventInfo in cache', parsedEventInfo);
-                    return;
-                }
+            const parsedEventInfo = JSON.parse(await AsyncStorage.getItem(LOCALKEYS.EVENT));
+            if (validEvent(parsedEventInfo)) {
+                setEventInfo(parsedEventInfo);
+                console.log('eventInfo found in cache', parsedEventInfo);
+                return;
             }
 
             // not found in cache
@@ -142,12 +141,14 @@ export default function ScoutPage() {
             <View id="textBlock" style={Styles.scoutContainer}>
                 <View style={Styles.groupLeft}>
                     <Text style={[Styles.mediumTitle, styles.loginTitle]}>Welcome {userInfo.name}</Text>
-                    <Text style={[Styles.bodyText]}>Event: {appVariables.eventKey}</Text>
+                    <Text style={[Styles.bodyText]}>Event: {appVariables?.eventKey} {eventInfo?.event?.name}</Text>
                     <Text style={[Styles.bodyText]}>
-                        Match 1 blue: {eventInfo[1]?.alliances?.blue?.team_keys?.join(', ')}
+                        Match 1 blue:{' '}
+                        { eventInfo.matches && eventInfo.matches[1]?.alliances?.blue?.team_keys?.join(', ') }
                     </Text>
-                    <Text style={[Styles.bodyText]}
-                    >Match 1 red: {eventInfo[1]?.alliances?.red?.team_keys?.join(', ')}
+                    <Text style={[Styles.bodyText]}>
+                        Match 1 red:{' '}
+                        { eventInfo.matches && eventInfo.matches[1]?.alliances?.red?.team_keys?.join(', ') }
                     </Text>
                 </View>
             </View>
