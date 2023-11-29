@@ -52,11 +52,11 @@ export default StyleSheet.create({
         borderRadius: 5,
     },
     scoutContainer: {
-        flex: 1,
         minWidth: "100%",
-        paddingHorizontal: 30,
+        padding: 30,
         minHeight: 480,
         backgroundColor: '#c0c0f0',
+        flexDirection: 'column',
     },
     dropdownContent: {
         width: 150, // Adjust the width as needed

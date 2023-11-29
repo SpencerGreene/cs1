@@ -41,7 +41,7 @@ export default function LoginPage() {
                         />
                     </View>
                 </View>
-                <View style={Styles.groupCenter}>
+                <View style={[Styles.groupCenter, {marginTop: 50}]}>
                     <Button label="Log in" theme="primary" onPress={onPress} />
                 </View>
             </View>

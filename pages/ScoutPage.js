@@ -1,14 +1,16 @@
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import React, { useContext, useEffect } from 'react';
 import BubbleApi from '../api/BubbleApi';
 
 import Styles from '../styles/Styles';
-import { LOCALKEYS } from '../config';
+import { LOCALKEYS, PHASES } from '../config';
 import { AuthContext } from '../components/AuthProvider';
 import BlueAllianceApi from '../api/BlueAllianceApi';
 import Header from '../components/Header';
+import ScoutPageSelect from './ScoutPageSelect';
+import ButtonsFwdBack from '../components/ButtonsFwdBack';
 
 export default function ScoutPage() {
     const {
@@ -138,20 +140,10 @@ export default function ScoutPage() {
     return (
         <View>
             <Header />
-            <View id="textBlock" style={Styles.scoutContainer}>
-                <View style={Styles.groupLeft}>
-                    <Text style={[Styles.mediumTitle, styles.loginTitle]}>Welcome {userInfo.name}</Text>
-                    <Text style={[Styles.bodyText]}>Event: {appVariables?.eventKey} {eventInfo?.event?.name}</Text>
-                    <Text style={[Styles.bodyText]}>
-                        Match 1 blue:{' '}
-                        { eventInfo.matches && eventInfo.matches[1]?.alliances?.blue?.team_keys?.join(', ') }
-                    </Text>
-                    <Text style={[Styles.bodyText]}>
-                        Match 1 red:{' '}
-                        { eventInfo.matches && eventInfo.matches[1]?.alliances?.red?.team_keys?.join(', ') }
-                    </Text>
-                </View>
+            <View style={Styles.scoutContainer}>
+                <ScoutPageSelect />
             </View>
+            <ButtonsFwdBack phase={PHASES.teleop} />
         </View>
     );
 }
