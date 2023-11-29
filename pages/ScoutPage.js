@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import BubbleApi from '../api/BubbleApi';
 
 import Styles from '../styles/Styles';
@@ -20,6 +20,15 @@ export default function ScoutPage() {
         colorDict, setColorDict,
         lastChanged, setLastChanged,
     } = useContext(AuthContext);
+
+    const [gameState, setGameState] = useState({
+        phase: PHASES.select,
+        startTime: null,
+        matchType: null,
+        matchNumber: null,
+        scoutTeamNumT: null,
+        scoutSelectionValid: false,
+    });
 
     // get lastChanged from api - TODO refresh other info if it's stale
     useEffect(() => {
@@ -141,9 +150,12 @@ export default function ScoutPage() {
         <View>
             <Header />
             <View style={Styles.scoutContainer}>
-                <ScoutPageSelect />
+                {gameState.phase === PHASES.select 
+                    ? <ScoutPageSelect gameState={gameState} setGameState={setGameState} />
+                    : <ScoutPageGame gameState={gameState} setGameState={setGameState} />
+                }
             </View>
-            <ButtonsFwdBack phase={PHASES.teleop} />
+            <ButtonsFwdBack phase={gameState.phase} clickable={gameState.scoutSelectionValid} />
         </View>
     );
 }

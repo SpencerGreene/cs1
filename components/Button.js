@@ -1,14 +1,13 @@
 import { StyleSheet, View, Pressable, Text } from 'react-native';
 import AppColors from '../styles/AppColors';
 
-export default function Button({ label, theme, onPress }) {
+export default function Button({ label, theme, onPress, clickable }) {
     const themeStyle = styles[theme];
-    console.log(theme, {themeStyle});
     return (
         <View style={[styles.buttonContainer, themeStyle.buttonContainer] }>
             <Pressable 
                 style={[ styles.all.button, themeStyle?.button ]}
-                onPress={onPress}
+                onPress={() => clickable && onPress()}
             >
                 <Text style={[ styles.all.buttonLabel, themeStyle?.buttonLabel] }>{label}</Text>
             </Pressable>
@@ -25,7 +24,7 @@ const stylesAll = StyleSheet.create({
     },
     button: {
         borderRadius: 5,
-        minHeight: '100%',
+        flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -43,7 +42,7 @@ const stylesForward = StyleSheet.create({
         flex: 7,
     },
     button: {
-        backgroundColor: AppColors.primary
+        backgroundColor: AppColors.primary,
     },
     buttonLabel: {
         color: AppColors.surface,
@@ -52,12 +51,12 @@ const stylesForward = StyleSheet.create({
 
 const stylesBack = StyleSheet.create({
     buttonContainer: {
-        flex: 2,
-        borderWidth: 1,
-        borderColor: AppColors.textGray,
+        flex: 3,
     },
     button: {
         backgroundColor: AppColors.background,
+        borderWidth: 1,
+        borderColor: AppColors.textGray,
     },
     buttonLabel: {
         color: AppColors.textGray,
@@ -83,7 +82,3 @@ const styles = {
     back: stylesBack,
     primary: stylesPrimary,
 }
-
-// console.log({styles});
-// console.log("all: ", styles['all']);
-// console.log("primary.button: ", styles['primary'].button);

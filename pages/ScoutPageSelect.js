@@ -5,7 +5,7 @@ import React, { useContext } from 'react';
 import Styles from '../styles/Styles';
 import { AuthContext } from '../components/AuthProvider';
 
-export default function ScoutPageSelect() {
+export default function ScoutPageSelect({ gameState, setGameState }) {
     const {
         eventInfo,
     } = useContext(AuthContext);
@@ -14,6 +14,9 @@ export default function ScoutPageSelect() {
         <View id="textBlock">
             <View style={Styles.groupLeft}>
                 <Text style={[Styles.bodyText]}>Event: {eventInfo?.eventKey} {eventInfo?.event?.name}</Text>
+                <Text style={[Styles.bodyText]}>Phase: {gameState?.phase.display}</Text>
+                <Text style={[Styles.bodyText]}>Match: {gameState?.matchType} {gameState?.matchNumber}</Text>
+                <Text style={[Styles.bodyText]}>Team: {gameState?.scoutTeamNumT}</Text>
                 <Text style={[Styles.bodyText]}>
                     Match 1 blue:{' '}
                     {eventInfo.matches && eventInfo.matches[1]?.alliances?.blue?.team_keys?.join(', ')}

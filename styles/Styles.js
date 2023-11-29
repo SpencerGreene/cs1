@@ -53,7 +53,10 @@ export default StyleSheet.create({
     },
     scoutContainer: {
         minWidth: "100%",
-        padding: 30,
+        paddingLeft: 10,
+        paddingRight: 10,
+        paddingTop: 30,
+        paddingBottom: 30,
         minHeight: 480,
         backgroundColor: '#c0c0f0',
         flexDirection: 'column',

@@ -2,31 +2,31 @@ import { StyleSheet, View } from 'react-native';
 import Button from './Button';
 import AppColors from '../styles/AppColors';
 
-export default function ButtonsFwdBack({ phase }) {
+export default function ButtonsFwdBack({ phase, clickable }) {
     return (
         <View style={styles.fwdBackContainer}>
-            {phase.backLabel && showButton(phase.backLabel, phase.back, "back")}
-            {phase.forwardLabel && showButton(phase.forwardLabel, phase.forward, "forward")}
+            {phase.backLabel && showButton(phase.backLabel, phase.back, "back", clickable)}
+            {phase.forwardLabel && showButton(phase.forwardLabel, phase.forward, "forward", clickable)}
         </View>
     );
 }
 
-function showButton(label, newPhase, theme) {
+function showButton(label, newPhase, theme, clickable) {
     const onPress = () => { 
         console.log('button pressed', {label, newPhase, theme});
         alert(`${newPhase.display} pressed`); 
     }
     return (
-        <Button theme={theme} label={label} onPress={onPress} />
+        <Button theme={theme} label={label} onPress={onPress} clickable={clickable} />
     );
 }
 
 const styles = StyleSheet.create({
     fwdBackContainer: {
-        width: '100%',
+        minWidth: '100%',
         height: 40,
-        marginLeft: 0,
-        marginRight: 0,
+        paddingLeft: 10,
+        paddingRight: 10,
         marginTop: 20,
         justifyContent: 'center',   // vertical center
         flexDirection: 'row',       // place buttons in a row

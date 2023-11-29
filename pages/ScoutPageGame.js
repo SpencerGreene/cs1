@@ -8,16 +8,17 @@ import { AuthContext } from '../components/AuthProvider';
 
 export default function ScoutPageGame() {
     const {
-        userInfo, 
+        userInfo,
     } = useContext(AuthContext);
 
     return (
         <View style={Styles.column30}>
             <View id="textBlock">
                 <View style={Styles.groupLeft}>
-                    <Text style={[Styles.mediumTitle, styles.loginTitle]}>Scouting!{userInfo.name}</Text>
-                    <Button label="Back" theme="primary" onPress={phaseBack} />
-                    <Button label="Forward" theme="primary" onPress={phaseForward} />
+                    <Text style={[Styles.bodyText]}>Event: {eventInfo?.eventKey} {eventInfo?.event?.name}</Text>
+                    <Text style={[Styles.bodyText]}>Phase: {gameState?.phase.display}</Text>
+                    <Text style={[Styles.bodyText]}>Match: {gameState?.matchType} {gameState?.matchNumber}</Text>
+                    <Text style={[Styles.bodyText]}>Team: {gameState?.scoutTeamNumT}</Text>
                 </View>
             </View>
         </View>
