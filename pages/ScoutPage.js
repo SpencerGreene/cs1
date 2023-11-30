@@ -10,7 +10,7 @@ import { AuthContext } from '../components/AuthProvider';
 import BlueAllianceApi from '../api/BlueAllianceApi';
 import Header from '../components/Header';
 import ScoutPageSelect from './ScoutPageSelect';
-import ScoutPageGame from './ScoutPageSelect';
+import ScoutPageGame from './ScoutPageGame';
 import ButtonsFwdBack from '../components/ButtonsFwdBack';
 
 export default function ScoutPage() {
@@ -23,11 +23,12 @@ export default function ScoutPage() {
     } = useContext(AuthContext);
 
     const [gameState, setGameState] = useState({
-        phase: PHASES.select,
+        phase: PHASES.auto,
         startTime: null,
-        matchType: null,
-        matchNumber: null,
-        scoutTeamNumT: null,
+        matchType: 'Qual',
+        matchNumber: 1,
+        scoutTeamNumT: '1768',
+        allianceColor: 'blue',
         scoutSelectionValid: true,
     });
 
@@ -38,7 +39,6 @@ export default function ScoutPage() {
             setLastChanged(apiLastChanged);
 
             console.log('last changed loaded from api', apiLastChanged);
-            console.log('current time is', new Date().getTime());
         };
 
         populateLastChanged();

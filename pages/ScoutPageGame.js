@@ -15,10 +15,7 @@ export default function ScoutPageGame() {
         <View style={Styles.column30}>
             <View id="textBlock">
                 <View style={Styles.groupLeft}>
-                    <Text style={[Styles.bodyText]}>Event: {eventInfo?.eventKey} {eventInfo?.event?.name}</Text>
-                    <Text style={[Styles.bodyText]}>Phase: {gameState?.phase.display}</Text>
-                    <Text style={[Styles.bodyText]}>Match: {gameState?.matchType} {gameState?.matchNumber}</Text>
-                    <Text style={[Styles.bodyText]}>Team: {gameState?.scoutTeamNumT}</Text>
+                    
                 </View>
             </View>
         </View>
@@ -26,7 +23,7 @@ export default function ScoutPageGame() {
 }
 
 const styles = StyleSheet.create({
-    bottomNotes: {
+    bottomNotes: { 
         marginTop: 60,
         marginBottom: 100,
     },
