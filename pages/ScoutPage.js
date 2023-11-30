@@ -23,12 +23,12 @@ export default function ScoutPage() {
     } = useContext(AuthContext);
 
     const [gameState, setGameState] = useState({
-        phase: PHASES.auto,
+        phase: PHASES.select,
         startTime: null,
         matchType: 'Qual',
         matchNumber: 1,
-        scoutTeamNumT: '1768',
-        allianceColor: 'blue',
+        scoutTeamNumT: null,
+        allianceColor: null,
         scoutSelectionValid: true,
     });
 

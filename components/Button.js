@@ -1,7 +1,7 @@
 import { StyleSheet, View, Pressable, Text } from 'react-native';
 import AppColors from '../styles/AppColors';
 
-export default function Button({ label, theme, onPress, clickable }) {
+export default function Button({ label, theme, onPress, clickable = true }) {
     const themeStyle = styles[theme];
     return (
         <View style={[styles.buttonContainer, themeStyle.buttonContainer] }>
@@ -33,13 +33,13 @@ const stylesAll = StyleSheet.create({
     },
     buttonLabel: {
         fontSize: 15,
-        fontWeight: '600',
+        fontWeight: '700',
     }
 });
 
 const stylesForward = StyleSheet.create({
     buttonContainer: {
-        flex: 7,
+        flex: 5,
     },
     button: {
         backgroundColor: AppColors.primary,
@@ -51,15 +51,15 @@ const stylesForward = StyleSheet.create({
 
 const stylesBack = StyleSheet.create({
     buttonContainer: {
-        flex: 3,
+        flex: 1,
     },
     button: {
         backgroundColor: AppColors.background,
         borderWidth: 1,
-        borderColor: AppColors.textGray,
+        borderColor: AppColors.primary,
     },
     buttonLabel: {
-        color: AppColors.textGray,
+        color: AppColors.primary,
     },
 });
 

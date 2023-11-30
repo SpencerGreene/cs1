@@ -4,35 +4,33 @@ import React, { useContext } from 'react';
 
 import Styles from '../styles/Styles';
 import { AuthContext } from '../components/AuthProvider';
-import TeamPicker3 from '../components/TeamPicker3';
+import TeamPicker36 from '../components/TeamPicker6';
 
 export default function ScoutPageSelect({ gameState, setGameState }) {
     const { eventInfo } = useContext(AuthContext);
     const { matches } = eventInfo;
 
-    const setSelectedTeam = teamNumT => {
-        setGameState({ ...gameState, scoutTeamNumT: teamNumT });
+    const setSelectedTeam = (teamNumT, color) => {
+        setGameState({ ...gameState, scoutTeamNumT: teamNumT, allianceColor: color });
     }
+
+    const teamPicker = () => (
+        <View>
+            <TeamPicker36
+                choicesRed={matches[gameState.matchNumber].alliances.red.team_keys}
+                choicesBlue={matches[gameState.matchNumber].alliances.blue.team_keys}
+                onOptionSelect={setSelectedTeam}
+            />
+        </View>
+
+    );
 
     return (
         <View id="textBlock">
             <View style={Styles.groupLeft}>
                 <Text style={[Styles.bodyText]}>Event: {eventInfo?.eventKey} {eventInfo?.event?.name}</Text>
                 <Text style={[Styles.bodyText]}>Match: {gameState?.matchType} {gameState?.matchNumber}</Text>
-                <Text style={[Styles.bodyText]}>Team: {gameState?.scoutTeamNumT}</Text>
-                <Text style={[Styles.bodyText]}>
-                    Match 1 blue:{' '}
-                    {matches && matches[gameState.matchNumber]?.alliances?.blue?.team_keys?.join(', ')}
-                </Text>
-                <Text style={[Styles.bodyText]}>
-                    Match 1 red:{' '}
-                    {matches && matches[gameState.matchNumber]?.alliances?.red?.team_keys?.join(', ')}
-                </Text>
-                <TeamPicker3
-                    alliance='red'
-                    choices={ matches[gameState.matchNumber].alliances.red.team_keys }
-                    onOptionSelect={setSelectedTeam}
-                />
+                {matches && teamPicker()}
             </View>
         </View>
     );
