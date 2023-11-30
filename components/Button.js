@@ -6,10 +6,10 @@ export default function Button({ label, theme, onPress, clickable }) {
     return (
         <View style={[styles.buttonContainer, themeStyle.buttonContainer] }>
             <Pressable 
-                style={[ styles.all.button, themeStyle?.button ]}
+                style={[ styles.all.button, themeStyle?.button, !clickable && styles.inactive.button ]}
                 onPress={() => clickable && onPress()}
             >
-                <Text style={[ styles.all.buttonLabel, themeStyle?.buttonLabel] }>{label}</Text>
+                <Text style={[ styles.all.buttonLabel, themeStyle?.buttonLabel, !clickable && styles.inactive.buttonLabel ] }>{label}</Text>
             </Pressable>
         </View>
     );
@@ -76,9 +76,21 @@ const stylesPrimary = StyleSheet.create({
     }
 });
 
+const stylesInactive = StyleSheet.create({
+    button: {
+        backgroundColor: AppColors.buttonInactiveBackground,
+    },
+
+
+});
+
 const styles = {
     all: stylesAll,
     forward: stylesForward,
     back: stylesBack,
     primary: stylesPrimary,
+    inactive: StyleSheet.create({
+        button: { backgroundColor: AppColors.buttonInactiveBackground },
+        buttonLabel: { color: AppColors.bodyText },
+    }),
 }

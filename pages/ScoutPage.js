@@ -10,6 +10,7 @@ import { AuthContext } from '../components/AuthProvider';
 import BlueAllianceApi from '../api/BlueAllianceApi';
 import Header from '../components/Header';
 import ScoutPageSelect from './ScoutPageSelect';
+import ScoutPageGame from './ScoutPageSelect';
 import ButtonsFwdBack from '../components/ButtonsFwdBack';
 
 export default function ScoutPage() {
@@ -27,7 +28,7 @@ export default function ScoutPage() {
         matchType: null,
         matchNumber: null,
         scoutTeamNumT: null,
-        scoutSelectionValid: false,
+        scoutSelectionValid: true,
     });
 
     // get lastChanged from api - TODO refresh other info if it's stale
@@ -148,14 +149,14 @@ export default function ScoutPage() {
 
     return (
         <View>
-            <Header />
+            <Header gameState={gameState}/>
             <View style={Styles.scoutContainer}>
                 {gameState.phase === PHASES.select 
                     ? <ScoutPageSelect gameState={gameState} setGameState={setGameState} />
                     : <ScoutPageGame gameState={gameState} setGameState={setGameState} />
                 }
             </View>
-            <ButtonsFwdBack phase={gameState.phase} clickable={gameState.scoutSelectionValid} />
+            <ButtonsFwdBack gameState={gameState} setGameState={setGameState} />
         </View>
     );
 }

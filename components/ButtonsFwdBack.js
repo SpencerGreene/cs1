@@ -1,21 +1,20 @@
 import { StyleSheet, View } from 'react-native';
 import Button from './Button';
-import AppColors from '../styles/AppColors';
 
-export default function ButtonsFwdBack({ phase, clickable }) {
+export default function ButtonsFwdBack({ gameState, setGameState }) {
+    const { phase, scoutSelectionValid: clickable } = gameState;
+    const setPhase = newPhase => setGameState({...gameState, phase: newPhase});
     return (
         <View style={styles.fwdBackContainer}>
-            {phase.backLabel && showButton(phase.backLabel, phase.back, "back", clickable)}
-            {phase.forwardLabel && showButton(phase.forwardLabel, phase.forward, "forward", clickable)}
+            {phase.backLabel && showButton(phase.backLabel, phase.back, "back", clickable, setPhase)}
+            {phase.forwardLabel && showButton(phase.forwardLabel, phase.forward, "forward", clickable, setPhase)}
         </View>
     );
 }
 
-function showButton(label, newPhase, theme, clickable) {
-    const onPress = () => { 
-        console.log('button pressed', {label, newPhase, theme});
-        alert(`${newPhase.display} pressed`); 
-    }
+function showButton(label, newPhase, theme, clickable, setPhase) {
+    const onPress = () => setPhase(newPhase);
+
     return (
         <Button theme={theme} label={label} onPress={onPress} clickable={clickable} />
     );

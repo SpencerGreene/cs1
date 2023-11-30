@@ -6,8 +6,9 @@ import {
 
 import { AuthContext } from '../components/AuthProvider';
 import Styles from '../styles/Styles';
+import { PHASES } from '../config';
 
-export default function Header() {
+export default function Header({ gameState }) {
     const { userInfo, logout } = useContext(AuthContext);
     const [isModalVisible, setModalVisible] = useState(false);
 
@@ -47,29 +48,39 @@ export default function Header() {
         }
     };
 
+    const profileButton = (
+        <Pressable onPress={toggleModal}
+            style={({ pressed }) => [styles.profileContainer, pressed && styles.pressed]}
+        >
+            {renderProfileContent()}
+        </Pressable>
+    );
+
+    const profileMenu = (
+        <Modal
+            animationType="none"
+            transparent={true}
+            visible={isModalVisible}
+            onRequestClose={toggleModal}
+        >
+            <Pressable onPress={handleBackgroundPress} style={styles.modalContainer}>
+                <View style={Styles.dropdownContent}>
+                    <Pressable style={Styles.dropdownItem} onPress={handleLogout}>
+                        <Text>Logout</Text>
+                    </Pressable>
+                    {/* Add more items as needed */}
+                </View>
+            </Pressable>
+        </Modal>
+    );
+
     return (
         <View style={styles.headerContainer}>
-            {/* <Text>{userInfo.firstName}! Your OS is {Platform.OS} </Text> */}
-            <Pressable onPress={toggleModal}
-                style={({ pressed }) => [styles.profileContainer, pressed && styles.pressed]}
-            >
-                {renderProfileContent()}
-            </Pressable>
-            <Modal
-                animationType="none"
-                transparent={true}
-                visible={isModalVisible}
-                onRequestClose={toggleModal}
-            >
-                <Pressable onPress={handleBackgroundPress} style={styles.modalContainer}>
-                    <View style={Styles.dropdownContent}>
-                        <Pressable style={Styles.dropdownItem} onPress={handleLogout}>
-                            <Text>Logout</Text>
-                        </Pressable>
-                        {/* Add more items as needed */}
-                    </View>
-                </Pressable>
-            </Modal>
+            <Text style={styles.phaseTitle}>
+                {gameState.phase.display}
+            </Text>
+            {gameState.phase === PHASES.select && profileButton}
+            {gameState.phase === PHASES.select && profileMenu}
         </View>
     );
 }
@@ -81,6 +92,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         alignItems: 'flex-start',
         justifyContent: 'center',
+        flexDirection: 'row',
     },
     profileContainer: {
         alignSelf: 'flex-end',

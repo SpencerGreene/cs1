@@ -15,5 +15,7 @@ export default {
     frcBlue: '#1165EF',
     ltGreen: '#B2E2B7',
     bodyText: '#757F87',
+    buttonInactiveBackground: '#E7E9EB',
+    phaseColor: '#0E1E2F',
 };
 
