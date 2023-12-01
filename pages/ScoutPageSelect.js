@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import React, { useContext, useEffect } from 'react';
 
@@ -13,7 +13,7 @@ const label = (text, spacing) => (
     </Text>
 );
 
-export default function ScoutPageSelect({ gameState, setGameState, appVariables }) {
+export default function ScoutPageSelect({ gameState, setGameState }) {
     const { eventInfo } = useContext(AuthContext);
     const { eventKey, matches } = eventInfo;
 

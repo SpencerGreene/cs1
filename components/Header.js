@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import {
-    StyleSheet, View, Image, Text, Platform,
+    StyleSheet, View, Image, Text,
     Modal, Pressable,
 } from 'react-native';
 
@@ -8,8 +8,9 @@ import { AuthContext } from '../components/AuthProvider';
 import Styles from '../styles/Styles';
 import { PHASES } from '../config';
 import AppColors from '../styles/AppColors';
+import CountdownTimer from './CountdownTimer';
 
-export default function Header({ gameState }) {
+export default function Header({ gameState, maxGameTime }) {
     const { userInfo, logout } = useContext(AuthContext);
     const [isModalVisible, setModalVisible] = useState(false);
 
@@ -85,6 +86,8 @@ export default function Header({ gameState }) {
         </View>
     );
 
+    const countdownTimerRef = useRef();
+
     const headerGame = (
         <View style={styles.headerContainer}>
             <View style={styles.phaseContainer}>
@@ -98,9 +101,10 @@ export default function Header({ gameState }) {
                 </Text>
             </View>
             <View style={styles.phaseContainer}>
-                <Text style={styles.clockLabel}>
+                <CountdownTimer initialTime={maxGameTime} ref={countdownTimerRef} />
+                {/* <Text style={styles.clockLabel}>
                     {"2:33"}
-                </Text>
+                </Text> */}
             </View>
         </View>
     );

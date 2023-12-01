@@ -1,22 +1,28 @@
 import { StyleSheet, View } from 'react-native';
 import Button from './Button';
 
-export default function ButtonsFwdBack({ gameState, setGameState }) {
+export default function ButtonsFwdBack({ gameState, setPhase }) {
     const { phase, scoutSelectionValid: clickable } = gameState;
-    const setPhase = newPhase => setGameState({...gameState, phase: newPhase});
+
     return (
         <View style={styles.fwdBackContainer}>
-            {phase.backLabel && showButton(phase.backLabel, phase.back, "back", clickable, setPhase)}
-            {phase.forwardLabel && showButton(phase.forwardLabel, phase.forward, "forward", clickable, setPhase)}
+            {phase.backLabel && 
+                <Button 
+                    theme="back" 
+                    label={phase.backLabel} 
+                    onPress={() => setPhase(phase.back, phase.backActions)} 
+                    clickable={clickable} 
+                />
+            }
+            {phase.forwardLabel && 
+                <Button 
+                    theme="forward" 
+                    label={phase.forwardLabel} 
+                    onPress={() => setPhase(phase.forward, phase.forwardActions)} 
+                    clickable={clickable} 
+                />
+            }
         </View>
-    );
-}
-
-function showButton(label, newPhase, theme, clickable, setPhase) {
-    const onPress = () => setPhase(newPhase);
-
-    return (
-        <Button theme={theme} label={label} onPress={onPress} clickable={clickable} />
     );
 }
 
@@ -28,6 +34,6 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         marginTop: 20,
         justifyContent: 'center',   // vertical center
-        flexDirection: 'row',       // place buttons in a row
+        flexDirection: 'row',
     },
 })

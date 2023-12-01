@@ -5,7 +5,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import BubbleApi from '../api/BubbleApi';
 
 import Styles from '../styles/Styles';
-import { LOCALKEYS, PHASES } from '../config';
+import { ACTIONS, LOCALKEYS, PHASES } from '../config';
 import { AuthContext } from '../components/AuthProvider';
 import BlueAllianceApi from '../api/BlueAllianceApi';
 import Header from '../components/Header';
@@ -31,6 +31,50 @@ export default function ScoutPage() {
         allianceColor: null,
         scoutSelectionValid: null,
     });
+
+    const maxGameTime = () => 150 + appVariables?.game?.autoTeleSeconds;
+
+    const doAction = action => {
+        switch(action) {
+            case ACTIONS.clearConditions:
+                break;
+            case ACTIONS.clearMatchTeam:
+                break;
+            case ACTIONS.deleteCounts:
+                break;
+            case ACTIONS.deleteScout:
+                break;
+            case ACTIONS.incrementMatchNum:
+                const matchNumber = gameState.matchNumber + 1;
+                console.log('updating default to ', matchNumber);
+                AsyncStorage.setItem(
+                    LOCALKEYS.APPVAR, 
+                    JSON.stringify({...appVariables, defaultMatchNum: matchNumber})
+                );
+                BubbleApi.apiSetDefaultMatchNumber(matchNumber);
+                console.log({matchNumber});
+                return { matchNumber };
+            case ACTIONS.makeScout:
+                break;
+            case ACTIONS.reloadMaxed:
+                break;
+            case ACTIONS.startClock:
+                return { startTime: new Date() };
+            case ACTIONS.submit:
+                break;
+            default:
+                console.error('uknown action', action);
+        }
+        return {};
+    }
+
+    const setPhase = (newPhase, actions) => {
+        const phaseUpdate = { phase: newPhase };
+        const actionUpdates = actions ? actions.map(action => doAction(action)) : [];
+        const updates = Object.assign(phaseUpdate, ...actionUpdates);
+        console.log({actions, actionUpdates, updates});
+        setGameState({ ...gameState, ...updates });
+    };
 
     // get lastChanged from api - TODO refresh other info if it's stale
     useEffect(() => {
@@ -156,14 +200,14 @@ export default function ScoutPage() {
 
     return (
         <View>
-            <Header gameState={gameState}/>
+            <Header gameState={gameState} maxGameTime={maxGameTime()}/>
             <View style={Styles.scoutContainer}>
                 {gameState.phase === PHASES.select 
-                    ? <ScoutPageSelect gameState={gameState} setGameState={setGameState} appVariables={appVariables} />
-                    : <ScoutPageGame gameState={gameState} setGameState={setGameState} />
+                    ? <ScoutPageSelect gameState={gameState} setGameState={setGameState} />
+                    : <ScoutPageGame   gameState={gameState} setGameState={setGameState} appVariables={appVariables} />
                 }
             </View>
-            <ButtonsFwdBack gameState={gameState} setGameState={setGameState} />
+            <ButtonsFwdBack gameState={gameState} setGameState={setGameState} setPhase={setPhase}/>
         </View>
     );
 }

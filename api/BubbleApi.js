@@ -114,6 +114,20 @@ export default class BubbleApi {
         return colorDict;
     }
 
+    static async apiSetDefaultMatchNumber(matchNumber) {
+        try {
+            const { data } = await axios.post(
+                `${this.workflowUrl}/setDefaultMatchNum`,
+                { matchNumber },
+                { headers: { Authorization: `Bearer ${this.apiToken}` } },
+            );
+            
+            return data.response;
+        } catch (err) {
+            console.error(`setDefaultMatchNum fail`);
+        }
+    }
+
     // public debug functions
     static printToken() {
         console.log('my token is', this.apiToken);
@@ -231,8 +245,6 @@ export default class BubbleApi {
 
         return option;
     }
-
-
 }
 
 

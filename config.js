@@ -67,7 +67,7 @@ export const PHASES = {
         backLabel: '<<< Auto',
         backActions: [ACTIONS.reloadMaxed],
         forwardLabel: 'Endgame >>>',
-        backActions: [ACTIONS.reloadMaxed],
+        forwardActions: [ACTIONS.reloadMaxed],
         endTime: 30,
         showClock: true,
     },
@@ -77,6 +77,7 @@ export const PHASES = {
         backLabel: '<<< Teleop',
         backActions: [ACTIONS.reloadMaxed],
         forwardLabel: 'Submit >>>',
+        forwardActions: [],
         endTime: -20, // 20 seconds after match, auto jump to submit
         showClock: true,
     },
