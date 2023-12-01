@@ -1,36 +1,42 @@
-// TeamPicker6.js
+// MatchPicker.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import AppColors from '../styles/AppColors';
 
-const TeamPicker6 = ({ choicesRed, choicesBlue, onOptionSelect, resetSelectedOptions }) => {
-    const [selectedOption, setSelectedOption] = useState(null);
+const MatchPicker = ({ onMatchSelect }) => {
+    const [selectedMatchType, setSelectedMatchType] = useState(null);
+    const [selectedMatch, setSelectedMatch] = useState(null);
 
-    const handleOptionClick = (choice, color) => {
-        setSelectedOption(choice);
-        onOptionSelect(choice, color);
+    const handleTypeClick = (matchType) => {
+        setSelectedMatchType(matchType);
+        onMatchSelect({ matchType, matchNumber: selectedMatch });
     };
 
-    useEffect(() => {
-        setSelectedOption(null);
-    }, [resetSelectedOptions]);
+    const handleMatchText = (text) => {
+        const matchNumber = parseInt(text);
+        setSelectedMatch(matchNum);
+        onMatchSelect({ matchType: selectedMatchType, matchNumber });
+    };
 
-    const teamButton = (teamKey, index, color) => {
-        const choice = teamKey.substring(3);
+    // useEffect(() => {
+    //     setSelectedOption(null);
+    // }, [resetSelectedOptions]);
+
+    const matchTypeButton = (choice, index) => {
         return (
             <Pressable
                 key={index}
                 style={({ pressed }) => [
                     styles.optionButton,
-                    selectedOption === choice ? styles.selectedButton[color] : null,
-                    pressed && selectedOption === null ? styles.pressedButton : null,
+                    selectedMatchType === choice ? styles.selectedButton['blue'] : null,
+                    pressed && selectedMatchType === null ? styles.pressedButton : null,
                 ]}
-                onPress={() => handleOptionClick(choice, color)}
+                onPress={() => handleTypeClick(choice)}
             >
                 <Text style={[
                     styles.buttonText,
-                    styles.buttonText[color],
-                    selectedOption === choice ? styles.buttonText.selected : null,
+                    styles.buttonText['blue'],
+                    selectedMatchType === choice ? styles.buttonText.selected : null,
                 ]}>{choice}</Text>
             </Pressable>
         );
@@ -38,8 +44,8 @@ const TeamPicker6 = ({ choicesRed, choicesBlue, onOptionSelect, resetSelectedOpt
 
     return (
         <View style={styles.optionContainer}>
-            {choicesRed.map((teamKey, index) => teamButton(teamKey, index, 'red'))}
-            {choicesBlue.map((teamKey, index) => teamButton(teamKey, index, 'blue'))}
+            {matchTypeButton('Practice', 0)}
+            {matchTypeButton('Qual', 1)}
         </View>
     );
 };
@@ -84,4 +90,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default TeamPicker6;
+export default MatchPicker;

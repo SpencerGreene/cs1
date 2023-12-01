@@ -30,10 +30,10 @@ export default StyleSheet.create({
         fontWeight: '600',
         color: AppColors.bodyText,
         marginBottom: 2,
-    },    
+    },
     bodyText: {
         fontSize: 15,
-        color: AppColors.bodyText,
+        color: AppColors.text,
         lineHeight: 20
     },
     inputView: {
@@ -58,7 +58,7 @@ export default StyleSheet.create({
         paddingTop: 30,
         paddingBottom: 30,
         minHeight: 480,
-        backgroundColor: '#c0c0f0',
+        borderWidth: 1,
         flexDirection: 'column',
     },
     dropdownContent: {
@@ -77,5 +77,10 @@ export default StyleSheet.create({
         borderBottomColor: '#ccc',
         width: '100%',
         alignItems: 'center',
+    },
+    metadataLabel: {
+        fontSize: 13,
+        fontWeight: '700',
+        color: AppColors.bodyText,
     },
 });

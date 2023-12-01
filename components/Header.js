@@ -155,9 +155,8 @@ const styles = StyleSheet.create({
     // phase top left
     phaseTitle: {
         fontSize: 19,
-        color: AppColors.phaseColor,
+        color: AppColors.text,
         fontWeight: '700',
-        // backgroundColor: AppColors.lightGray,
     },
 
     // team center

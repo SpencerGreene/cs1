@@ -39,7 +39,7 @@ const stylesAll = StyleSheet.create({
 
 const stylesForward = StyleSheet.create({
     buttonContainer: {
-        flex: 5,
+        flex: 250,
     },
     button: {
         backgroundColor: AppColors.primary,
@@ -51,7 +51,7 @@ const stylesForward = StyleSheet.create({
 
 const stylesBack = StyleSheet.create({
     buttonContainer: {
-        flex: 1,
+        flex: 105,
     },
     button: {
         backgroundColor: AppColors.background,
