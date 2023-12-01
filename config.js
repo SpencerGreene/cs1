@@ -20,6 +20,7 @@ export const ACTIONS = {
     deleteScout: 'deleteScout',
     submit: 'submit',
     startClock: 'startClock',
+    incrementMatchNum: 'incrementMatchNum',
 }
 
 /* Definitions:
@@ -85,7 +86,7 @@ export const PHASES = {
         backLabel: 'Cancel',
         backActions: [ACTIONS.reloadMaxed],
         forwardLabel: 'Submit',
-        forwardActions: [ACTIONS.submit, ACTIONS.clearConditions],
+        forwardActions: [ACTIONS.submit, ACTIONS.clearConditions, ACTIONS.incrementMatchNum],
         endTime: -80, // 60 seconds after submit, auto submit
         showClock: false,
     },
