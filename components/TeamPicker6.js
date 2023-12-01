@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import AppColors from '../styles/AppColors';
 
-const TeamPicker6 = ({ choicesRed, choicesBlue, onOptionSelect, resetSelectedOptions }) => {
+const TeamPicker6 = ({ choicesRed, choicesBlue, onOptionSelect, scoutTeamNumT }) => {
     const [selectedOption, setSelectedOption] = useState(null);
 
     const handleOptionClick = (choice, color) => {
@@ -11,9 +11,15 @@ const TeamPicker6 = ({ choicesRed, choicesBlue, onOptionSelect, resetSelectedOpt
         onOptionSelect(choice, color);
     };
 
-    useEffect(() => {
+    const resetOption = () => {
         setSelectedOption(null);
-    }, [resetSelectedOptions]);
+    }
+
+    useEffect(() => {
+        if (scoutTeamNumT === null && selectedOption !== null) {
+            setSelectedOption(null);
+        }
+    }, [scoutTeamNumT]);
 
     const teamButton = (teamKey, index, color) => {
         const choice = teamKey.substring(3);

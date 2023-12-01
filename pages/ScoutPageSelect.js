@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, TextInput } from 'react-native';
 
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import Styles from '../styles/Styles';
 import { AuthContext } from '../components/AuthProvider';
@@ -13,22 +13,34 @@ const label = (text, spacing) => (
     </Text>
 );
 
-export default function ScoutPageSelect({ gameState, setGameState }) {
+export default function ScoutPageSelect({ gameState, setGameState, appVariables }) {
     const { eventInfo } = useContext(AuthContext);
     const { eventKey, matches } = eventInfo;
 
     const season = eventKey && eventKey.substring(0, 4);
 
+    const isValid = (matchType, matchNumber, teamNumT) =>
+        matchType === 'Practice'
+        || (matchType === 'Qual' && matchNumber > 0 && teamNumT > 0);
+
     const setSelectedTeam = (teamNumT, color) => {
-        setGameState({ ...gameState, scoutTeamNumT: teamNumT, allianceColor: color });
+        const scoutSelectionValid = isValid(gameState.matchType, gameState.matchNumber, teamNumT);
+        setGameState({ ...gameState, scoutTeamNumT: teamNumT, allianceColor: color, scoutSelectionValid });
     };
 
     const setSelectedMatch = (matchType, matchNumber) => {
-        setGameState({ ...gameState, matchType, matchNumber });
+        const scoutSelectionValid = isValid(matchType, matchNumber, null);
+        setGameState({ ...gameState, scoutTeamNumT: null, allianceColor: null,
+            matchType, matchNumber, scoutSelectionValid 
+        });
     };
 
+    useEffect(() => {
+        setSelectedTeam(null, null);
+    }, [gameState.phase]);
+
     const eventBlock = () => (
-        <View style={{ flexDirection: 'row' }}>
+        <View style={{ flexDirection: 'row', marginTop: 10 }}>
             <View style={{ flex: 1 }}>
                 {label("Season", 0)}
                 <Text style={[Styles.bodyText]}> {season} </Text >
@@ -42,22 +54,26 @@ export default function ScoutPageSelect({ gameState, setGameState }) {
 
     const matchBlock = () => (
         <View>
-            {label("Match", 30)}
-            {/* <Text style={[Styles.bodyText]}>{gameState?.matchType} {gameState?.matchNumber}</Text> */}
-            <MatchPicker onMatchSelect={setSelectedMatch} />
+            {label("Match", 55)}
+            <MatchPicker 
+                eventInfo={eventInfo} 
+                onMatchSelect={setSelectedMatch} 
+                matchType={gameState.matchType}
+                matchNumber={gameState.matchNumber}
+            />
         </View>
     );
 
     const teamBlock = () => {
         const alliances = matches && gameState.matchNumber && matches[gameState.matchNumber]?.alliances;
-        console.log({matches, gameState, alliances});
         return (
             <View>
-                {label("Team", 30)}
+                {alliances && label("Team", 40)}
                 <TeamPicker36
                     choicesRed ={alliances ? alliances.red.team_keys  : []}
                     choicesBlue={alliances ? alliances.blue.team_keys : []}
                     onOptionSelect={setSelectedTeam}
+                    scoutTeamNumT={gameState.scoutTeamNumT}
                 />
             </View>
         )
@@ -68,7 +84,7 @@ export default function ScoutPageSelect({ gameState, setGameState }) {
             <View style={Styles.groupLeft}>
                 {eventBlock()}
                 {matchBlock()}
-                {matches && teamBlock()}
+                {matches && gameState.matchType === 'Qual' && teamBlock()}
             </View>
         </View>
     );

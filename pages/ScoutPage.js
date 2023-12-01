@@ -29,7 +29,7 @@ export default function ScoutPage() {
         matchNumber: null,
         scoutTeamNumT: null,
         allianceColor: null,
-        scoutSelectionValid: true,
+        scoutSelectionValid: null,
     });
 
     // get lastChanged from api - TODO refresh other info if it's stale
@@ -46,9 +46,14 @@ export default function ScoutPage() {
 
     // get appVariables from cache or api
     useEffect(() => {
+        const setStartingMatch = appVar => {
+            setGameState({...gameState, matchType: appVar.defaultMatchType, matchNumber: appVar.defaultMatchNum});
+        };
+
         const populateAppVariables = async () => {
             if (appVariables && userInfo && appVariables.teamNumT === userInfo.teamNumT) {
                 console.log('app Variables already in memory', appVariables);
+                setStartingMatch(appVariables);
                 return;
             }
             // Check if appVariables is in AsyncStorage
@@ -60,6 +65,7 @@ export default function ScoutPage() {
                 parsedAppVariables.fetchedDate = new Date(parsedAppVariables.fetchedDate);
                 setAppVariables(parsedAppVariables);
                 console.log('app variables found in cache', parsedAppVariables);
+                setStartingMatch(parsedAppVariables);
             } else {
                 // If not, fetch it from the API
                 const apiAppVariables = await BubbleApi.apiGetAppVariables();
@@ -68,6 +74,7 @@ export default function ScoutPage() {
                 // Store it in AsyncStorage for future use
                 await AsyncStorage.setItem(LOCALKEYS.APPVAR, JSON.stringify(apiAppVariables));
                 console.log('app variables loaded from api', apiAppVariables);
+                setStartingMatch(apiAppVariables);
             }
         };
 
@@ -152,7 +159,7 @@ export default function ScoutPage() {
             <Header gameState={gameState}/>
             <View style={Styles.scoutContainer}>
                 {gameState.phase === PHASES.select 
-                    ? <ScoutPageSelect gameState={gameState} setGameState={setGameState} />
+                    ? <ScoutPageSelect gameState={gameState} setGameState={setGameState} appVariables={appVariables} />
                     : <ScoutPageGame gameState={gameState} setGameState={setGameState} />
                 }
             </View>

@@ -4,9 +4,9 @@ import { View, Text, Pressable, StyleSheet, TextInput } from 'react-native';
 import AppColors from '../styles/AppColors';
 import Styles from '../styles/Styles';
 
-const MatchPicker = ({ onMatchSelect }) => {
-    const [selectedMatchType, setSelectedMatchType] = useState(null);
-    const [selectedMatch, setSelectedMatch] = useState(null);
+const MatchPicker = ({ eventInfo, onMatchSelect, matchType, matchNumber }) => {
+    const [selectedMatchType, setSelectedMatchType] = useState('');
+    const [selectedMatch, setSelectedMatch] = useState(0);
 
     const handleTypeClick = (matchType) => {
         setSelectedMatchType(matchType);
@@ -14,14 +14,16 @@ const MatchPicker = ({ onMatchSelect }) => {
     };
 
     const handleMatchText = (text) => {
-        const matchNumber = parseInt(text);
+        const isNumber = !isNaN(parseInt(text));
+        const matchNumber = isNumber ? parseInt(text) : null;
         setSelectedMatch(matchNumber);
         onMatchSelect(selectedMatchType, matchNumber);
     };
 
-    // useEffect(() => {
-    //     setSelectedOption(null);
-    // }, [resetSelectedOptions]);
+    useEffect(() => {
+        if (matchType !== selectedMatchType) setSelectedMatchType(matchType);
+        if (matchNumber !== selectedMatch) setSelectedMatch(matchNumber);
+    }, [matchType, matchNumber]);
 
     const matchTypeButton = (choice, index) => {
         return (
@@ -46,11 +48,12 @@ const MatchPicker = ({ onMatchSelect }) => {
     const matchNumberInput = () => {
         return (
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={Styles.bodyText}>qm_</Text>
+                <Text style={Styles.bodyText}>{eventInfo.eventKey}_</Text>
                 <TextInput
                     id="matchNumber"
-                    style={Styles.textInput}
+                    style={[Styles.textInput, {maxWidth: 10, borderColor: AppColors.lightGray}]}
                     onChangeText={handleMatchText}
+                    value={selectedMatch ? selectedMatch.toString() : ''}
                 />
             </View>
         );

@@ -58,7 +58,6 @@ export default StyleSheet.create({
         paddingTop: 30,
         paddingBottom: 30,
         minHeight: 480,
-        borderWidth: 1,
         flexDirection: 'column',
     },
     dropdownContent: {
