@@ -1,7 +1,8 @@
 // MatchPicker.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, TextInput } from 'react-native';
 import AppColors from '../styles/AppColors';
+import Styles from '../styles/Styles';
 
 const MatchPicker = ({ onMatchSelect }) => {
     const [selectedMatchType, setSelectedMatchType] = useState(null);
@@ -9,13 +10,13 @@ const MatchPicker = ({ onMatchSelect }) => {
 
     const handleTypeClick = (matchType) => {
         setSelectedMatchType(matchType);
-        onMatchSelect({ matchType, matchNumber: selectedMatch });
+        onMatchSelect(matchType, selectedMatch);
     };
 
     const handleMatchText = (text) => {
         const matchNumber = parseInt(text);
-        setSelectedMatch(matchNum);
-        onMatchSelect({ matchType: selectedMatchType, matchNumber });
+        setSelectedMatch(matchNumber);
+        onMatchSelect(selectedMatchType, matchNumber);
     };
 
     // useEffect(() => {
@@ -42,18 +43,41 @@ const MatchPicker = ({ onMatchSelect }) => {
         );
     };
 
+    const matchNumberInput = () => {
+        return (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={Styles.bodyText}>qm_</Text>
+                <TextInput
+                    id="matchNumber"
+                    style={Styles.textInput}
+                    onChangeText={handleMatchText}
+                />
+            </View>
+        );
+    };
+
     return (
-        <View style={styles.optionContainer}>
-            {matchTypeButton('Practice', 0)}
-            {matchTypeButton('Qual', 1)}
+        <View style={{ flexDirection: 'row' }}>
+            <View style={styles.optionContainer}>
+                {matchTypeButton('Practice', 0)}
+                {matchTypeButton('Qual', 1)}
+            </View>
+            <View style={styles.optionContainer}>
+                {selectedMatchType === 'Qual' && matchNumberInput()}
+            </View>
+
         </View>
+
     );
 };
 
 const styles = StyleSheet.create({
     optionContainer: {
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        flex: 1,
+        paddingLeft: 20,
     },
     optionButton: {
         backgroundColor: AppColors.background,

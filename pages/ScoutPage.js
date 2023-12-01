@@ -25,8 +25,8 @@ export default function ScoutPage() {
     const [gameState, setGameState] = useState({
         phase: PHASES.select,
         startTime: null,
-        matchType: 'Qual',
-        matchNumber: 1,
+        matchType: null,
+        matchNumber: null,
         scoutTeamNumT: null,
         allianceColor: null,
         scoutSelectionValid: true,

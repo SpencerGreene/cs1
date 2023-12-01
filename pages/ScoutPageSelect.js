@@ -23,6 +23,10 @@ export default function ScoutPageSelect({ gameState, setGameState }) {
         setGameState({ ...gameState, scoutTeamNumT: teamNumT, allianceColor: color });
     };
 
+    const setSelectedMatch = (matchType, matchNumber) => {
+        setGameState({ ...gameState, matchType, matchNumber });
+    };
+
     const eventBlock = () => (
         <View style={{ flexDirection: 'row' }}>
             <View style={{ flex: 1 }}>
@@ -40,23 +44,27 @@ export default function ScoutPageSelect({ gameState, setGameState }) {
         <View>
             {label("Match", 30)}
             {/* <Text style={[Styles.bodyText]}>{gameState?.matchType} {gameState?.matchNumber}</Text> */}
-            <MatchPicker onOptionSelect={() => alert('optionselect')} />
+            <MatchPicker onMatchSelect={setSelectedMatch} />
         </View>
     );
 
-    const teamBlock = () => (
-        <View>
-            {label("Team", 30)}
-            <TeamPicker36
-                choicesRed={matches[gameState.matchNumber].alliances.red.team_keys}
-                choicesBlue={matches[gameState.matchNumber].alliances.blue.team_keys}
-                onOptionSelect={setSelectedTeam}
-            />
-        </View>
-    );
+    const teamBlock = () => {
+        const alliances = matches && gameState.matchNumber && matches[gameState.matchNumber]?.alliances;
+        console.log({matches, gameState, alliances});
+        return (
+            <View>
+                {label("Team", 30)}
+                <TeamPicker36
+                    choicesRed ={alliances ? alliances.red.team_keys  : []}
+                    choicesBlue={alliances ? alliances.blue.team_keys : []}
+                    onOptionSelect={setSelectedTeam}
+                />
+            </View>
+        )
+    };
 
     return (
-        <View id="textBlock">
+        <View id="selectPage">
             <View style={Styles.groupLeft}>
                 {eventBlock()}
                 {matchBlock()}
