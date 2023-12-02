@@ -1,11 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import React, { useContext, useEffect, useState } from 'react';
 import BubbleApi from '../api/BubbleApi';
 
 import Styles from '../styles/Styles';
-import { ACTIONS, LOCALKEYS, PHASES } from '../config';
+import { ACTIONS, LOCALKEYS, PHASES, CLOCKSTATES } from '../config';
 import { AuthContext } from '../components/AuthProvider';
 import BlueAllianceApi from '../api/BlueAllianceApi';
 import Header from '../components/Header';
@@ -25,6 +25,7 @@ export default function ScoutPage() {
     const [gameState, setGameState] = useState({
         phase: PHASES.select,
         startTime: null,
+        clockState: CLOCKSTATES.hidden,
         matchType: null,
         matchNumber: null,
         scoutTeamNumT: null,
@@ -59,7 +60,14 @@ export default function ScoutPage() {
             case ACTIONS.reloadMaxed:
                 break;
             case ACTIONS.startClock:
-                return { startTime: new Date() };
+                return { startTime: new Date(), clockState: CLOCKSTATES.running };
+            case ACTIONS.hideClock:
+                    return { clockState: CLOCKSTATES.hidden };
+            case ACTIONS.resetClock:
+                console.log('clock reset');
+
+                return { clockState: CLOCKSTATES.stopped };
+                // TODO - reset clock to full value
             case ACTIONS.submit:
                 break;
             default:

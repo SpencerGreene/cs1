@@ -20,7 +20,16 @@ export const ACTIONS = {
     deleteScout: 'deleteScout',
     submit: 'submit',
     startClock: 'startClock',
+    resetClock: 'resetClock',
+    hideClock: 'hideClock',
+    showClock: 'showClock',
     incrementMatchNum: 'incrementMatchNum',
+}
+
+export const CLOCKSTATES = {
+    hidden: 'hidden',
+    stopped: 'stopped',
+    running: 'running',
 }
 
 /* Definitions:
@@ -35,7 +44,7 @@ export const PHASES = {
     select: {
         display: 'Select Match & Team',
         forwardLabel: 'Confirm selection >>>',
-        forwardActions: [ACTIONS.makeScout, ACTIONS.clearConditions],
+        forwardActions: [ACTIONS.makeScout, ACTIONS.clearConditions, ACTIONS.resetClock],
         showClock: false,
     },
 

@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import AppColors from '../styles/AppColors';
+import { CLOCKSTATES } from '../config';
 
-const CountdownTimer = React.forwardRef(({ initialTime, onReset, onStart }, ref) => {
+const CountdownTimer = React.forwardRef(({ initialTime, clockState, onReset, onStart }, ref) => {
     const [time, setTime] = useState(initialTime);
     const timerRef = useRef(null);
 
@@ -46,11 +47,14 @@ const CountdownTimer = React.forwardRef(({ initialTime, onReset, onStart }, ref)
     const minutes = Math.floor(time / 60);
     const seconds = time % 60;
 
+
     return (
         <View>
-            <Text style={styles.clockLabel}>
-                {`${minutes}:${seconds < 10 ? '0' : ''}${seconds}`}
-            </Text>
+            {clockState !== CLOCKSTATES.hidden &&
+                <Text style={styles.clockLabel}>
+                    {`${minutes}:${seconds < 10 ? '0' : ''}${seconds}`}
+                </Text>
+            }
         </View>
     );
 });

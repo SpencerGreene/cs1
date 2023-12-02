@@ -6,7 +6,7 @@ import {
 
 import { AuthContext } from '../components/AuthProvider';
 import Styles from '../styles/Styles';
-import { PHASES } from '../config';
+import { CLOCKSTATES, PHASES } from '../config';
 import AppColors from '../styles/AppColors';
 import CountdownTimer from './CountdownTimer';
 
@@ -101,10 +101,11 @@ export default function Header({ gameState, maxGameTime }) {
                 </Text>
             </View>
             <View style={styles.phaseContainer}>
-                <CountdownTimer initialTime={maxGameTime} ref={countdownTimerRef} />
-                {/* <Text style={styles.clockLabel}>
-                    {"2:33"}
-                </Text> */}
+                <CountdownTimer
+                    initialTime={maxGameTime}
+                    ref={countdownTimerRef}
+                    clockState={gameState.clockState}
+                />
             </View>
         </View>
     );
