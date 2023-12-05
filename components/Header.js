@@ -10,7 +10,7 @@ import { CLOCKSTATES, PHASES } from '../config';
 import AppColors from '../styles/AppColors';
 import CountdownTimer from './CountdownTimer';
 
-export default function Header({ gameState, maxGameTime }) {
+export default function Header({ gameState, maxGameTime, startTimer, resetTimer, countdownTimerRef }) {
     const { userInfo, logout } = useContext(AuthContext);
     const [isModalVisible, setModalVisible] = useState(false);
 
@@ -86,8 +86,6 @@ export default function Header({ gameState, maxGameTime }) {
         </View>
     );
 
-    const countdownTimerRef = useRef();
-
     const headerGame = (
         <View style={styles.headerContainer}>
             <View style={styles.phaseContainer}>
@@ -104,6 +102,7 @@ export default function Header({ gameState, maxGameTime }) {
                 <CountdownTimer
                     initialTime={maxGameTime}
                     ref={countdownTimerRef}
+                    startTimer={startTimer} resetTimer={resetTimer}
                     clockState={gameState.clockState}
                 />
             </View>

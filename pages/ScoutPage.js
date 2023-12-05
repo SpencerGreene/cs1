@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import BubbleApi from '../api/BubbleApi';
 
 import Styles from '../styles/Styles';
@@ -36,7 +36,8 @@ export default function ScoutPage() {
     const maxGameTime = () => 150 + appVariables?.game?.autoTeleSeconds;
 
     const doAction = action => {
-        switch(action) {
+        console.log('action=', action);
+        switch (action) {
             case ACTIONS.clearConditions:
                 break;
             case ACTIONS.clearMatchTeam:
@@ -49,25 +50,25 @@ export default function ScoutPage() {
                 const matchNumber = gameState.matchNumber + 1;
                 console.log('updating default to ', matchNumber);
                 AsyncStorage.setItem(
-                    LOCALKEYS.APPVAR, 
-                    JSON.stringify({...appVariables, defaultMatchNum: matchNumber})
+                    LOCALKEYS.APPVAR,
+                    JSON.stringify({ ...appVariables, defaultMatchNum: matchNumber })
                 );
                 BubbleApi.apiSetDefaultMatchNumber(matchNumber);
-                console.log({matchNumber});
+                console.log({ matchNumber });
                 return { matchNumber };
             case ACTIONS.makeScout:
                 break;
             case ACTIONS.reloadMaxed:
                 break;
             case ACTIONS.startClock:
+                startTimer();
                 return { startTime: new Date(), clockState: CLOCKSTATES.running };
             case ACTIONS.hideClock:
-                    return { clockState: CLOCKSTATES.hidden };
+                return { clockState: CLOCKSTATES.hidden };
             case ACTIONS.resetClock:
-                console.log('clock reset');
-
-                return { clockState: CLOCKSTATES.stopped };
-                // TODO - reset clock to full value
+                resetTimer();
+                return { startTime: null, clockState: CLOCKSTATES.stopped };
+            // TODO - reset clock to full value
             case ACTIONS.submit:
                 break;
             default:
@@ -80,7 +81,7 @@ export default function ScoutPage() {
         const phaseUpdate = { phase: newPhase };
         const actionUpdates = actions ? actions.map(action => doAction(action)) : [];
         const updates = Object.assign(phaseUpdate, ...actionUpdates);
-        console.log({actions, actionUpdates, updates});
+        console.log({ actions, actionUpdates, updates });
         setGameState({ ...gameState, ...updates });
     };
 
@@ -99,7 +100,7 @@ export default function ScoutPage() {
     // get appVariables from cache or api
     useEffect(() => {
         const setStartingMatch = appVar => {
-            setGameState({...gameState, matchType: appVar.defaultMatchType, matchNumber: appVar.defaultMatchNum});
+            setGameState({ ...gameState, matchType: appVar.defaultMatchType, matchNumber: appVar.defaultMatchNum });
         };
 
         const populateAppVariables = async () => {
@@ -145,7 +146,7 @@ export default function ScoutPage() {
     // get eventInfo from cache or API - depends on eventKey
     useEffect(() => {
         const validEvent = event => (
-            event 
+            event
             && event.eventKey === appVariables.eventKey
             && event.matches
             && event.matches[1]
@@ -206,16 +207,34 @@ export default function ScoutPage() {
         populateColorDict();
     }, [userInfo.teamNumT]); // Trigger only when appVariables changes
 
+    const countdownTimerRef = useRef();
+
+    const startTimer = () => {
+        countdownTimerRef.current && countdownTimerRef.current.startTimer();
+    };
+
+    const resetTimer = () => {
+        if (!countdownTimerRef.current) return;
+        if (countdownTimerRef.current.isReset()) return;
+        countdownTimerRef.current.resetTimer();
+    };
+
     return (
         <View>
-            <Header gameState={gameState} maxGameTime={maxGameTime()}/>
+            <Header
+                gameState={gameState}
+                maxGameTime={maxGameTime()}
+                startTimer={startTimer}
+                resetTimer={resetTimer}
+                countdownTimerRef={countdownTimerRef}
+            />
             <View style={Styles.scoutContainer}>
-                {gameState.phase === PHASES.select 
+                {gameState.phase === PHASES.select
                     ? <ScoutPageSelect gameState={gameState} setGameState={setGameState} />
-                    : <ScoutPageGame   gameState={gameState} setGameState={setGameState} appVariables={appVariables} />
+                    : <ScoutPageGame gameState={gameState} setGameState={setGameState} appVariables={appVariables} />
                 }
             </View>
-            <ButtonsFwdBack gameState={gameState} setGameState={setGameState} setPhase={setPhase}/>
+            <ButtonsFwdBack gameState={gameState} setGameState={setGameState} setPhase={setPhase} />
         </View>
     );
 }

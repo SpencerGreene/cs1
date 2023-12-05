@@ -52,7 +52,7 @@ export const PHASES = {
     pregame: {
         display: 'Pregame',
         backLabel: '<<< Cancel',
-        backActions: [ACTIONS.deleteScout, ACTIONS.clearMatchTeam],
+        backActions: [ACTIONS.deleteCounts, ACTIONS.deleteScout, ACTIONS.clearMatchTeam],
         forwardLabel: 'Start Game >>>',
         forwardActions: [ACTIONS.startClock], // clearConditions already done
         endTime: null,
@@ -63,7 +63,7 @@ export const PHASES = {
     auto: {
         display: 'Auto',
         backLabel: '<<< Pregame',
-        backActions: [ACTIONS.deleteCounts, ACTIONS.clearConditions],
+        backActions: [ACTIONS.clearConditions, ACTIONS.reloadMaxed, ACTIONS.resetClock],
         forwardLabel: 'Teleop >>>',
         forwardActions: [ACTIONS.reloadMaxed],
         endTime: 135,
