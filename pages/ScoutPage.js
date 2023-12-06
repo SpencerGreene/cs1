@@ -23,14 +23,18 @@ export default function ScoutPage() {
     } = useContext(AuthContext);
 
     const [gameState, setGameState] = useState({
-        phase: PHASES.select,
-        startTime: null,
-        clockState: CLOCKSTATES.hidden,
+        // selection screen
         matchType: null,
         matchNumber: null,
         scoutTeamNumT: null,
         allianceColor: null,
         scoutSelectionValid: null,
+
+        // game running
+        phase: PHASES.select,
+        phaseOverride: false,
+        startTime: null,
+        clockState: CLOCKSTATES.hidden,
     });
 
     const maxGameTime = () => 150 + appVariables?.game?.autoTeleSeconds;
@@ -41,36 +45,36 @@ export default function ScoutPage() {
             case ACTIONS.clearConditions:
                 break;
             case ACTIONS.clearMatchTeam:
-                break;
+                return { scoutTeamNumT: null, allianceColor: null };
             case ACTIONS.deleteCounts:
                 break;
             case ACTIONS.deleteScout:
                 break;
             case ACTIONS.incrementMatchNum:
                 const matchNumber = gameState.matchNumber + 1;
-                console.log('updating default to ', matchNumber);
                 AsyncStorage.setItem(
                     LOCALKEYS.APPVAR,
                     JSON.stringify({ ...appVariables, defaultMatchNum: matchNumber })
                 );
                 BubbleApi.apiSetDefaultMatchNumber(matchNumber);
-                console.log({ matchNumber });
                 return { matchNumber };
             case ACTIONS.makeScout:
                 break;
             case ACTIONS.reloadMaxed:
                 break;
             case ACTIONS.startClock:
-                startTimer();
                 return { startTime: new Date(), clockState: CLOCKSTATES.running };
             case ACTIONS.hideClock:
                 return { clockState: CLOCKSTATES.hidden };
             case ACTIONS.resetClock:
-                resetTimer();
+                // CountdownTimer resets automatically when state is stopped
                 return { startTime: null, clockState: CLOCKSTATES.stopped };
-            // TODO - reset clock to full value
             case ACTIONS.submit:
                 break;
+            case ACTIONS.clearPhaseOverride:
+                return { phaseOverride: false };
+            case ACTIONS.setPhaseOverride:
+                return { phaseOverride: true };
             default:
                 console.error('uknown action', action);
         }
@@ -84,6 +88,10 @@ export default function ScoutPage() {
         console.log({ actions, actionUpdates, updates });
         setGameState({ ...gameState, ...updates });
     };
+
+    const overridePhase = (newPhase, actions) => {
+        setPhase(newPhase, actions);
+    }
 
     // get lastChanged from api - TODO refresh other info if it's stale
     useEffect(() => {
@@ -207,26 +215,15 @@ export default function ScoutPage() {
         populateColorDict();
     }, [userInfo.teamNumT]); // Trigger only when appVariables changes
 
-    const countdownTimerRef = useRef();
+    const handleTimeout = () => {
 
-    const startTimer = () => {
-        countdownTimerRef.current && countdownTimerRef.current.startTimer();
-    };
-
-    const resetTimer = () => {
-        if (!countdownTimerRef.current) return;
-        if (countdownTimerRef.current.isReset()) return;
-        countdownTimerRef.current.resetTimer();
-    };
+    }
 
     return (
         <View>
             <Header
                 gameState={gameState}
                 maxGameTime={maxGameTime()}
-                startTimer={startTimer}
-                resetTimer={resetTimer}
-                countdownTimerRef={countdownTimerRef}
             />
             <View style={Styles.scoutContainer}>
                 {gameState.phase === PHASES.select
@@ -234,7 +231,7 @@ export default function ScoutPage() {
                     : <ScoutPageGame gameState={gameState} setGameState={setGameState} appVariables={appVariables} />
                 }
             </View>
-            <ButtonsFwdBack gameState={gameState} setGameState={setGameState} setPhase={setPhase} />
+            <ButtonsFwdBack gameState={gameState} setPhase={overridePhase} />
         </View>
     );
 }

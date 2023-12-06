@@ -1,91 +1,54 @@
-import React, { useState, useEffect, useRef, useImperativeHandle } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
-import AppColors from '../styles/AppColors';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { CLOCKSTATES } from '../config';
+import AppColors from '../styles/AppColors';
 
-const CountdownTimer = React.forwardRef(({ initialTime, clockState, startTimer, resetTimer }, ref) => {
+const CountdownTimer = ({ initialTime, clockState }) => {
     const [time, setTime] = useState(initialTime);
-    const timerRef = useRef(null);
-    const isResetRef = useRef(false);
+    const intervalRef = useRef(null);
 
-    const handleStartTimer = () => {
-        // Reset the isReset flag when starting the timer
-        isResetRef.current = false;
+    useEffect(() => {
+        // Clear any existing interval when unmounting
+        return () => clearInterval(intervalRef.current);
+    }, []);
 
-        // Clear any existing interval
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-        console.log('timerRef.current after clearing:', timerRef.current);
-
-        console.log('handleStartTimer called');
-        if (!timerRef.current) {
-            timerRef.current = setInterval(() => {
-                setTime((prevTime) => {
-                    if (prevTime > 0) {
-                        return prevTime - 1;
-                    } else {
-                        clearInterval(timerRef.current);
-                        timerRef.current = null;
-                        // Handle timer expiration, e.g., show a message or trigger an action
-                        return 0;
-                    }
-                });
+    useEffect(() => {
+        if (clockState === CLOCKSTATES.running) {
+            intervalRef.current = setInterval(() => {
+                setTime((prevTime) => prevTime - 1);
             }, 1000);
         } else {
-            console.log('we already got one');
+            // Clear the interval when isRunning becomes false
+            setTime(initialTime);
+            clearInterval(intervalRef.current);
         }
-    };
 
-    const handleResetTimer = () => {
-        console.log('resetTimer triggered');
-        clearInterval(timerRef.current);
-        setTime(initialTime);
-        isResetRef.current = true;
-        resetTimer && resetTimer();
-        isResetRef.current = false;
-    };
+        // clear when component unmounts or clockState changes
+        return () => clearInterval(intervalRef.current);
+    }, [clockState]);
 
     useEffect(() => {
-        return () => clearInterval(timerRef.current);
-    }, []);
+        // Reset the timer when initialTime changes
+        if (clockState !== CLOCKSTATES.running) {
+            setTime(initialTime);
+        }
+    }, [initialTime]);
 
-    // useEffect(() => {
-    //     console.log('onStart triggered');
-
-    //     onStart && onStart(startTimer);
-    // }, [onStart]);
-
-    useEffect(() => {
-        console.log('set ref triggered');
-
-        ref.current = {
-            startTimer: handleStartTimer,
-            resetTimer: handleResetTimer,
-        };
-        // }, [ref, handleStartTimer, handleResetTimer]);
-    }, []);
-
-    useImperativeHandle(ref, () => ({
-        startTimer: handleStartTimer,
-        resetTimer: handleResetTimer,
-        isReset: () => isResetRef.current,
-    }), [handleStartTimer, handleResetTimer]);
-
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
+    const formatTime = (seconds) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+    };
 
     return (
         <View>
             {clockState !== CLOCKSTATES.hidden &&
                 <Text style={styles.clockLabel}>
-                    {`${minutes}:${seconds < 10 ? '0' : ''}${seconds}`}
-                </Text>
-            }
+                    {formatTime(time)}
+                </Text>}
         </View>
     );
-});
-
-export default CountdownTimer;
+};
 
 const styles = StyleSheet.create({
     clockLabel: {
@@ -95,3 +58,5 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end',
     },
 });
+
+export default CountdownTimer;

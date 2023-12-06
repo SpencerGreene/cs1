@@ -24,6 +24,8 @@ export const ACTIONS = {
     hideClock: 'hideClock',
     showClock: 'showClock',
     incrementMatchNum: 'incrementMatchNum',
+    clearPhaseOverride: 'clearPhaseOverride',
+    setPhaseOverride: 'setPhaseOverride',
 }
 
 export const CLOCKSTATES = {
@@ -52,7 +54,10 @@ export const PHASES = {
     pregame: {
         display: 'Pregame',
         backLabel: '<<< Cancel',
-        backActions: [ACTIONS.deleteCounts, ACTIONS.deleteScout, ACTIONS.clearMatchTeam],
+        backActions: [
+            ACTIONS.deleteCounts, ACTIONS.deleteScout, 
+            ACTIONS.clearMatchTeam, ACTIONS.clearPhaseOverride
+        ],
         forwardLabel: 'Start Game >>>',
         forwardActions: [ACTIONS.startClock], // clearConditions already done
         endTime: null,
@@ -96,7 +101,9 @@ export const PHASES = {
         backLabel: 'Cancel',
         backActions: [ACTIONS.reloadMaxed],
         forwardLabel: 'Submit',
-        forwardActions: [ACTIONS.submit, ACTIONS.clearConditions, ACTIONS.incrementMatchNum],
+        forwardActions: [ACTIONS.submit, ACTIONS.incrementMatchNum,
+            ACTIONS.clearConditions, ACTIONS.clearPhaseOverride,
+        ],
         endTime: -80, // 60 seconds after submit, auto submit
         showClock: false,
     },
