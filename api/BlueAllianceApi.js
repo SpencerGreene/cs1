@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { TBA_KEY, TBA_URL } from '../config.js';
+import { ERROR } from '../logConfig.js';
 
 export default class BlueAllianceApi {
     static apiToken = TBA_KEY;
@@ -40,7 +41,7 @@ export default class BlueAllianceApi {
             );
             return data;
         } catch (err) {
-            console.log(`_fetchData fail ${endpoint}`);
+            ERROR(`_fetchData fail ${endpoint}`);
         }
     }
 

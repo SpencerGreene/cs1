@@ -1,8 +1,11 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useEffect, useState } from 'react';
-import BubbleApi from '../api/BubbleApi';
+import { LOG } from '../logConfig.js';
 import { LOCALKEYS } from '../config';
+
+import BubbleApi from '../api/BubbleApi';
+
 
 export const AuthContext = createContext();
 
@@ -32,7 +35,7 @@ export const AuthProvider = ({ children }) => {
             BubbleApi.setApiToken(loginUser.token);
             await AsyncStorage.setItem('userInfo', JSON.stringify(loginUser));
 
-            console.log('fetched user', loginUser);
+            LOG('fetched user', loginUser);
         } else {
             alert('Email / password incorrect');
         }
@@ -46,9 +49,9 @@ export const AuthProvider = ({ children }) => {
         try {
             // BubbleApi.printToken(); // debug
             const logoutResult = await BubbleApi.apiLogout();
-            console.log(logoutResult);
+            LOG(logoutResult);
 
-            console.log({LOCALKEYS});
+            LOG({LOCALKEYS});
             for (const [key, value] of Object.entries(LOCALKEYS)) {
                 AsyncStorage.removeItem(value);
             }
@@ -58,7 +61,7 @@ export const AuthProvider = ({ children }) => {
             setEventInfo({});
 
         } catch (err) {
-            console.log(`logout error ${err}`);
+            LOG(`logout error ${err}`);
         };
         setUserInfo({});
         setIsLoading(false);
@@ -75,16 +78,16 @@ export const AuthProvider = ({ children }) => {
                 if (currentUser && currentUser.expireTime > new Date().getTime()) {
                     setUserInfo(currentUser);
                     BubbleApi.setApiToken(currentUser.token);
-                    console.log('user found in cache', currentUser);
+                    LOG('user found in cache', currentUser);
                 }
             } else {
-                console.log('no cached user found')
+                LOG('no cached user found')
             }
 
             setSplashLoading(false);
         } catch (err) {
             setSplashLoading(false);
-            console.log(`isLoggedIn error ${err}`);
+            LOG(`isLoggedIn error ${err}`);
         }
     };
 

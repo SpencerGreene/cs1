@@ -5,9 +5,11 @@ import {
 } from 'react-native';
 
 import { AuthContext } from '../components/AuthProvider';
+import { LOG } from '../logConfig';
+
+import AppColors from '../styles/AppColors';
 import Styles from '../styles/Styles';
 import { PHASES } from '../config';
-import AppColors from '../styles/AppColors';
 import CountdownTimer from './CountdownTimer';
 
 export default function Header({ gameState, maxGameTime, onTimeout }) {
@@ -109,7 +111,7 @@ export default function Header({ gameState, maxGameTime, onTimeout }) {
         </View>
     );
 
-    console.log(gameState);
+    LOG(gameState);
     return gameState.phase === PHASES.select ? headerSelect : headerGame;
 }
 

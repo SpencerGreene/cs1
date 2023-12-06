@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { DATA_URL, WORKFLOW_URL } from '../config.js';
+import { LOG, ERROR } from '../logConfig.js';
 
 export default class BubbleApi {
     static apiToken = '';
@@ -26,11 +27,11 @@ export default class BubbleApi {
                 expireTime: new Date().getTime() + data?.response?.expires * 1000,
             };
 
-            console.log('received token expires: ', Date(userInfo.expireTime).toLocaleString());
+            LOG('received token expires: ', Date(userInfo.expireTime).toLocaleString());
 
             return userInfo;
         } catch (err) {
-            console.error(`apiLogin fail ${email}`);
+            ERROR(`apiLogin fail ${email}`);
         }
     }
 
@@ -43,7 +44,7 @@ export default class BubbleApi {
             );
             return data.response;
         } catch (err) {
-            console.error(`apiLogout fail`);
+            ERROR(`apiLogout fail`);
         }
     }
 
@@ -124,13 +125,13 @@ export default class BubbleApi {
             
             return data.response;
         } catch (err) {
-            console.error(`setDefaultMatchNum fail`);
+            ERROR(`setDefaultMatchNum fail`);
         }
     }
 
     // public debug functions
     static printToken() {
-        console.log('my token is', this.apiToken);
+        LOG('my token is', this.apiToken);
     }
 
     // private functions
@@ -143,7 +144,7 @@ export default class BubbleApi {
             );
             return data.response;
         } catch (err) {
-            console.error(`_fetchData fail ${thingType} ${thingID}`);
+            ERROR(`_fetchData fail ${thingType} ${thingID}`);
         }
     }
 
@@ -156,7 +157,7 @@ export default class BubbleApi {
             );
             return data.response;
         } catch (err) {
-            console.error(`_searchData fail ${thingType} ${constraints}`);
+            ERROR(`_searchData fail ${thingType} ${constraints}`);
         }
     }
 
@@ -168,7 +169,7 @@ export default class BubbleApi {
             );
             return data.response;
         } catch (err) {
-            console.error(`_fetchWorkflow fail ${endpoint}`);
+            ERROR(`_fetchWorkflow fail ${endpoint}`);
         }
     }
 
@@ -237,7 +238,6 @@ export default class BubbleApi {
             },
             name: rawOption.name_text,
             height: rawOption.height_option_buttonheight,
-            display: rawOption.display_text,
             imageURL: rawOption.image_image,
             sortOrder: rawOption.sortorder_number,
             id: optionID,

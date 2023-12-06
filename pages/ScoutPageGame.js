@@ -5,37 +5,86 @@ import Button from '../components/Button';
 
 import Styles from '../styles/Styles';
 import { AuthContext } from '../components/AuthProvider';
+import { LOG } from '../logConfig';
 
-export default function ScoutPageGame() {
-    const {
-        userInfo,
-    } = useContext(AuthContext);
+export default function ScoutPageGame({ gameState, setGameState, appVariables }) {
+    const { userInfo } = useContext(AuthContext);
+
+    const { game } = appVariables;
+    const { counterDefs } = game;
+    const phaseCounterDefs = phase => counterDefs.filter(def => def.gamePhases.includes(phase.key));
+    const counterCondition = (def, conditionType) => {
+        const matches = def.conditions.filter(cond => cond.type === conditionType);
+        return matches.length > 0 ? matches[0] : null;
+    };
+
+    const displayOption = option => {
+        LOG({option});
+        return (
+            <View style={styles.optionRow} key={option.id}>
+                <Text>{option.name}</Text>
+            </View>
+        );
+    };
+
+    const displayCondition = cond => {
+        return (
+            <View style={styles.conditionCol}>
+                {cond && <Text>{cond.name}</Text>}
+                {cond && cond.options.map(option => displayOption(option))}
+            </View>
+        );
+    };
+
+    const displayCounterDef = def => {
+        return (
+            <View style={styles.counterRow} key={def.id}>
+                {displayCondition(counterCondition(def, "Condition 1"))}
+                {displayCondition(counterCondition(def, "Condition 2"))}
+                {displayCondition(counterCondition(def, "Condition 3"))}
+                {displayCondition(counterCondition(def, "Trigger"))}
+            </View>
+        )
+    };
 
     return (
-        <View style={Styles.column30}>
-            <View id="textBlock">
-                <View style={Styles.groupLeft}>
-                    
-                </View>
-            </View>
+        <View style={styles.scoutMain}>
+            {phaseCounterDefs(gameState.phase).map(def => displayCounterDef(def))}
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    bottomNotes: { 
-        marginTop: 60,
-        marginBottom: 100,
+    scoutMain: {
+        flexDirection: 'column',
+        flex: 1,
+        minWidth: "100%",
     },
-    loginTitle: {
-        marginTop: 30,
-        marginBottom: 12,
+    counterRow: {
+        borderWidth: 2,
+        flexDirection: 'row',
+        flex: 1,
+        minHeight: 100,
+        backgroundColor: '#fe7265',
+        color: 'black',
     },
-    image: {
-        width: 192,
-        height: 51.5,
-        alignSelf: 'center',
-        marginBottom: 30,
-        marginTop: 100,
+    conditionCol: {
+        borderWidth: 2,
+        flexDirection: 'column',
+        flex: 1,
+        minWidth: 100,
+        margin: 5,
+        color: 'black',
+        backgroundColor: 'yellow',
     },
+    optionRow: {
+        borderWidth: 1,
+        flexDirection: 'row',
+        alignContent: 'center',
+        alignItems: 'center',
+        flex: 1,
+        margin: 5,
+        backgroundColor: 'blue',
+        color: 'black',
+    }
 });

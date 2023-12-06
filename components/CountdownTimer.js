@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+
 import { CLOCKSTATES } from '../config';
 import AppColors from '../styles/AppColors';
 

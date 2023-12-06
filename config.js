@@ -56,6 +56,7 @@ export const PHASES = {
     // arriving here: select valid, scout valid
     pregame: {
         display: 'Pregame',
+        key: 'Pregame',
         backLabel: '<<< Cancel',
         backActions: [
             ACTIONS.deleteCounts, ACTIONS.deleteScout,
@@ -70,6 +71,7 @@ export const PHASES = {
     // arriving here: conditions clear (forward) or preserved w max-reload (back)
     auto: {
         display: 'Auto',
+        key: 'Auto',
         backLabel: '<<< Pregame',
         backActions: [
             ACTIONS.clearConditions, ACTIONS.clearPhaseOverride,
@@ -84,6 +86,7 @@ export const PHASES = {
     // arriving here: conditions preserved w max-reload (forward or back)
     teleop: {
         display: 'Teleop',
+        key: 'Teleop',
         backLabel: '<<< Auto',
         backActions: [ACTIONS.reloadMaxed],
         forwardLabel: 'Endgame >>>',
@@ -94,6 +97,7 @@ export const PHASES = {
 
     endgame: {
         display: 'Endgame',
+        key: 'Endgame',
         backLabel: '<<< Teleop',
         backActions: [ACTIONS.reloadMaxed],
         forwardLabel: 'Submit >>>',
