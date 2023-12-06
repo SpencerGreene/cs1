@@ -96,7 +96,12 @@ export default function Header({ gameState, maxGameTime, onTimeout }) {
                 </Text>
             </View>
             <View style={styles.teamContainer}>
-                <Text style={[styles.teamLabel, styles.alliance[gameState.allianceColor]]}>
+                <Text
+                    style={[
+                        styles.teamLabel,
+                        gameState.allianceColor === 'red' ? styles.alliance.red : null,
+                        gameState.allianceColor === 'blue' ? styles.alliance.blue : null,
+                    ]}>
                     {gameState.scoutTeamNumT}
                 </Text>
             </View>

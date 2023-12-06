@@ -31,15 +31,14 @@ const MatchPicker = ({ eventInfo, onMatchSelect, matchType, matchNumber }) => {
                 key={index}
                 style={({ pressed }) => [
                     styles.optionButton,
-                    selectedMatchType === choice ? styles.selectedButton['blue'] : null,
+                    selectedMatchType === choice ? styles.selectedButton : null,
                     pressed && selectedMatchType === null ? styles.pressedButton : null,
                 ]}
                 onPress={() => handleTypeClick(choice)}
             >
                 <Text style={[
                     styles.buttonText,
-                    styles.buttonText['blue'],
-                    selectedMatchType === choice ? styles.buttonText.selected : null,
+                    selectedMatchType === choice ? styles.buttonTextSelected : null,
                 ]}>{choice}</Text>
             </Pressable>
         );
@@ -51,7 +50,7 @@ const MatchPicker = ({ eventInfo, onMatchSelect, matchType, matchNumber }) => {
                 <Text style={Styles.bodyText}>{eventInfo.eventKey}_</Text>
                 <TextInput
                     id="matchNumber"
-                    style={[Styles.textInput, {maxWidth: 10, borderColor: AppColors.lightGray}]}
+                    style={styles.matchInput}
                     onChangeText={handleMatchText}
                     value={selectedMatch ? selectedMatch.toString() : ''}
                 />
@@ -81,6 +80,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flex: 1,
         paddingLeft: 20,
+        borderWidth: 2,
     },
     optionButton: {
         backgroundColor: AppColors.background,
@@ -93,27 +93,27 @@ const styles = StyleSheet.create({
         borderColor: AppColors.lightGray,
     },
     selectedButton: {
-        red: {
-            backgroundColor: AppColors.frcRed,
-        },
-        blue: {
-            backgroundColor: AppColors.frcBlue,
-        },
+        backgroundColor: AppColors.frcBlue,
     },
     pressedButton: {
         backgroundColor: 'gray',
     },
     buttonText: {
         fontWeight: 600,
-        red: {
-            color: AppColors.frcRed,
-        },
-        blue: {
-            color: AppColors.frcBlue,
-        },
-        selected: {
-            color: AppColors.surface,
-        }
+        color: AppColors.frcBlue,
+    },
+    buttonTextSelected: {
+        color: AppColors.surface,
+    },
+    matchInput: {
+        borderColor: AppColors.lightGray,
+        height: 40,
+        maxWidth: 40,
+        paddingHorizontal: 10,
+        marginLeft: 0,
+        borderWidth: 1,
+        borderRadius: 5,
+
     },
 });
 

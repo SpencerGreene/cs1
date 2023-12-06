@@ -23,20 +23,23 @@ const TeamPicker6 = ({ choicesRed, choicesBlue, onOptionSelect, scoutTeamNumT })
 
     const teamButton = (teamKey, index, color) => {
         const choice = teamKey.substring(3);
+        const isSelected = (selectedOption === choice);
         return (
             <Pressable
                 key={index}
                 style={({ pressed }) => [
                     styles.optionButton,
-                    selectedOption === choice ? styles.selectedButton[color] : null,
+                    isSelected && color === 'red' ? styles.selectedButtonRed : null,
+                    isSelected && color === 'blue' ? styles.selectedButtonBlue : null,
                     pressed && selectedOption === null ? styles.pressedButton : null,
                 ]}
                 onPress={() => handleOptionClick(choice, color)}
             >
                 <Text style={[
                     styles.buttonText,
-                    styles.buttonText[color],
-                    selectedOption === choice ? styles.buttonText.selected : null,
+                    color === 'red' ? styles.buttonTextRed : null,
+                    color === 'blue' ? styles.buttonTextBlue : null,
+                    isSelected ? styles.buttonTextSelected : null,
                 ]}>{choice}</Text>
             </Pressable>
         );
@@ -65,28 +68,26 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: AppColors.lightGray,
     },
-    selectedButton: {
-        red: {
-            backgroundColor: AppColors.frcRed,
-        },
-        blue: {
-            backgroundColor: AppColors.frcBlue,
-        },
+    selectedButtonRed: {
+        backgroundColor: AppColors.frcRed,
+    },
+    selectedButtonBlue: {
+        backgroundColor: AppColors.frcBlue,
     },
     pressedButton: {
         backgroundColor: 'gray',
     },
     buttonText: {
-        fontWeight: 600,
-        red: {
-            color: AppColors.frcRed,
-        },
-        blue: {
-            color: AppColors.frcBlue,
-        },
-        selected: {
-            color: AppColors.surface,
-        }
+        fontWeight: 700,
+    },
+    buttonTextRed: {
+        color: AppColors.frcRed,
+    },
+    buttonTextBlue: {
+        color: AppColors.frcBlue,
+    },
+    buttonTextSelected: {
+        color: AppColors.surface,
     },
 });
 
