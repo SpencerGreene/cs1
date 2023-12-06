@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from 'react';
+import React, { useState, useContext } from 'react';
 import {
     StyleSheet, View, Image, Text,
     Modal, Pressable,
@@ -10,7 +10,7 @@ import { PHASES } from '../config';
 import AppColors from '../styles/AppColors';
 import CountdownTimer from './CountdownTimer';
 
-export default function Header({ gameState, maxGameTime }) {
+export default function Header({ gameState, maxGameTime, onTimeout }) {
     const { userInfo, logout } = useContext(AuthContext);
     const [isModalVisible, setModalVisible] = useState(false);
 
@@ -102,6 +102,8 @@ export default function Header({ gameState, maxGameTime }) {
                 <CountdownTimer
                     initialTime={maxGameTime}
                     clockState={gameState.clockState}
+                    timeoutTime={gameState.phase.endTime}
+                    onTimeout={onTimeout}
                 />
             </View>
         </View>

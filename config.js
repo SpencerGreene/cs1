@@ -46,20 +46,23 @@ export const PHASES = {
     select: {
         display: 'Select Match & Team',
         forwardLabel: 'Confirm selection >>>',
-        forwardActions: [ACTIONS.makeScout, ACTIONS.clearConditions, ACTIONS.resetClock],
+        forwardActions: [
+            ACTIONS.makeScout, ACTIONS.resetClock,
+            ACTIONS.clearConditions, ACTIONS.clearPhaseOverride
+        ],
         showClock: false,
     },
 
-    // arriving here: select valid, scout valid, no counts, conditions clear
+    // arriving here: select valid, scout valid
     pregame: {
         display: 'Pregame',
         backLabel: '<<< Cancel',
         backActions: [
-            ACTIONS.deleteCounts, ACTIONS.deleteScout, 
+            ACTIONS.deleteCounts, ACTIONS.deleteScout,
             ACTIONS.clearMatchTeam, ACTIONS.clearPhaseOverride
         ],
         forwardLabel: 'Start Game >>>',
-        forwardActions: [ACTIONS.startClock], // clearConditions already done
+        forwardActions: [ACTIONS.startClock, ACTIONS.clearPhaseOverride],
         endTime: null,
         showClock: false,
     },
@@ -68,7 +71,10 @@ export const PHASES = {
     auto: {
         display: 'Auto',
         backLabel: '<<< Pregame',
-        backActions: [ACTIONS.clearConditions, ACTIONS.reloadMaxed, ACTIONS.resetClock],
+        backActions: [
+            ACTIONS.clearConditions, ACTIONS.clearPhaseOverride,
+            ACTIONS.reloadMaxed, ACTIONS.resetClock,
+        ],
         forwardLabel: 'Teleop >>>',
         forwardActions: [ACTIONS.reloadMaxed],
         endTime: 135,
@@ -102,7 +108,7 @@ export const PHASES = {
         backActions: [ACTIONS.reloadMaxed],
         forwardLabel: 'Submit',
         forwardActions: [ACTIONS.submit, ACTIONS.incrementMatchNum,
-            ACTIONS.clearConditions, ACTIONS.clearPhaseOverride,
+        ACTIONS.clearConditions, ACTIONS.clearPhaseOverride,
         ],
         endTime: -80, // 60 seconds after submit, auto submit
         showClock: false,

@@ -76,7 +76,7 @@ export default function ScoutPage() {
             case ACTIONS.setPhaseOverride:
                 return { phaseOverride: true };
             default:
-                console.error('uknown action', action);
+                console.error('unknown action', action);
         }
         return {};
     }
@@ -90,7 +90,8 @@ export default function ScoutPage() {
     };
 
     const overridePhase = (newPhase, actions) => {
-        setPhase(newPhase, actions);
+        const allActions = [ACTIONS.setPhaseOverride, ...actions];
+        setPhase(newPhase, allActions);
     }
 
     // get lastChanged from api - TODO refresh other info if it's stale
@@ -215,8 +216,10 @@ export default function ScoutPage() {
         populateColorDict();
     }, [userInfo.teamNumT]); // Trigger only when appVariables changes
 
-    const handleTimeout = () => {
-
+    const onTimeout = () => {
+        const { phase } = gameState;
+        console.log('timeout', {override: gameState.phaseOverride});
+        if (!gameState.phaseOverride) setPhase(phase.forward, phase.forwardActions);
     }
 
     return (
@@ -224,6 +227,7 @@ export default function ScoutPage() {
             <Header
                 gameState={gameState}
                 maxGameTime={maxGameTime()}
+                onTimeout={onTimeout}
             />
             <View style={Styles.scoutContainer}>
                 {gameState.phase === PHASES.select

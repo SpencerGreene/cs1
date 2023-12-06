@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { CLOCKSTATES } from '../config';
 import AppColors from '../styles/AppColors';
 
-const CountdownTimer = ({ initialTime, clockState }) => {
+const CountdownTimer = ({ initialTime, clockState, timeoutTime, onTimeout }) => {
     const [time, setTime] = useState(initialTime);
     const intervalRef = useRef(null);
 
@@ -15,7 +15,10 @@ const CountdownTimer = ({ initialTime, clockState }) => {
     useEffect(() => {
         if (clockState === CLOCKSTATES.running) {
             intervalRef.current = setInterval(() => {
-                setTime((prevTime) => prevTime - 1);
+                setTime((prevTime) => {
+                    // if (prevTime - 1 === timeoutTime) onTimeout();
+                    return prevTime - 1;
+                });
             }, 1000);
         } else {
             // Clear the interval when isRunning becomes false
@@ -34,10 +37,20 @@ const CountdownTimer = ({ initialTime, clockState }) => {
         }
     }, [initialTime]);
 
+    useEffect(() => {
+        // Check for timeout when the time changes
+        if (time === timeoutTime) {
+            onTimeout();
+        }
+    }, [time]);
+
     const formatTime = (seconds) => {
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
-        return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+        const sign = seconds < 0 ? '-' : '';
+        const absoluteSeconds = Math.abs(seconds);
+        const minutes = Math.floor(absoluteSeconds / 60);
+        const remainingSeconds = absoluteSeconds % 60;
+
+        return `${sign}${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
     };
 
     return (
