@@ -33,12 +33,13 @@ export default function Header({ gameState, maxGameTime, onTimeout }) {
     };
 
     const renderProfileContent = () => {
-        const { profileImage } = userInfo;
+        const { profilePictureUrl } = userInfo;
 
-        if (profileImage) {
+        console.log({profilePictureUrl});
+        if (profilePictureUrl) {
             return (
                 <Image
-                    source={{ uri: profileImage }}
+                    source={{ uri: profilePictureUrl }}
                     style={styles.profileImage}
                 />
             );
@@ -199,8 +200,8 @@ const styles = StyleSheet.create({
 
     // profile top right
     profileImage: {
-        width: 30,
-        height: 30,
+        width: 40,
+        height: 40,
         borderRadius: 20,
     },
     pressed: {

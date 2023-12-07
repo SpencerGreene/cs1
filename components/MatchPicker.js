@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
         backgroundColor: AppColors.frcBlue,
     },
     pressedButton: {
-        backgroundColor: 'gray',
+        backgroundColor: AppColors.medGray,
     },
     buttonText: {
         fontWeight: 600,

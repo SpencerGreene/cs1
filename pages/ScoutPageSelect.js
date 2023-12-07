@@ -101,7 +101,6 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'column',
         flex: 1,
-        // justifyContent: 'space-between',
     },
     eventBlock: {
         flex: 2,
@@ -110,7 +109,6 @@ const styles = StyleSheet.create({
     },
     matchBlock: {
         flex: 2,
-        // backgroundColor: 'red',
     },
     teamBlock: {
         flex: 4,

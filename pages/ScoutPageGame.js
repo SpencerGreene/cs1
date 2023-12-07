@@ -29,13 +29,29 @@ export default function ScoutPageGame({ gameState, setGameState, appVariables, c
         if (option.height === '2x') return 2 * height1x;
         return height1x;
     };
+    const imageHeight = option => {
+        const height1x = 35;
+        if (option.height === '3x') return 2 * height1x;
+        if (option.height === '2x') return 2 * height1x - 20;
+        return height1x - 10;
+    }
 
     const displayOption = option => {
         const [bgHexColor, fgHexColor] = optionColors(option, 'active');
+        const text = (<Text style={[styles.optionText, {color: fgHexColor}]}>{option.name}</Text>);
+
+        const image = (
+            option.imagePointer 
+            && <Image 
+                style={[styles.buttonImage, {width: imageHeight(option), height: imageHeight(option)}]} 
+                source={{uri: 'http:' + option.imagePointer}} 
+            />
+        ); 
+
         return (
             <View style={[styles.optionContainer, {minHeight: optionContainerHeight(option)}]} key={option.id}>
                 <Pressable style={[styles.optionButton, {backgroundColor: bgHexColor}]}>
-                    <Text style={[styles.optionText, {color: fgHexColor}]}>{option.name}</Text>
+                    {image || text}
                 </Pressable>
             </View>
         );
@@ -73,7 +89,6 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         flex: 1,
         minWidth: "100%",
-        backgroundColor: '#f1f1f1',
     },
     counterRow: {
         flexDirection: 'row',
@@ -83,8 +98,6 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         flex: 1,
         margin: 5,
-        color: 'black',
-        backgroundColor: 'white',
     },
     optionContainer: {
         maxHeight: 35,
@@ -101,5 +114,8 @@ const styles = StyleSheet.create({
     optionText: {
         fontSize: 13,
         alignSelf: 'center',
-    }
+    },
+    buttonImage: {
+        alignSelf: 'center',
+    },
 });

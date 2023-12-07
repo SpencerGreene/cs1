@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useContext, useEffect, useState } from 'react';
 
@@ -238,7 +238,7 @@ export default function ScoutPage() {
                         setGameState={setGameState}
                         appVariables={appVariables}
                         colorDict={colorDict}
-                      />
+                    />
                 }
             </View>
             <ButtonsFwdBack gameState={gameState} setPhase={overridePhase} />
@@ -271,5 +271,10 @@ const styles = StyleSheet.create({
         minHeight: 480,
         justifyContent: 'flex-start',
         flexDirection: 'column',
+    },
+    coneImage: {
+        width: 32,
+        height: 32,
+        borderWidth: 2,
     },
 });

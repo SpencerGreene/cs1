@@ -50,12 +50,14 @@ export default class BubbleApi {
 
     static async apiGetUser(userID) {
         const rawUser = await this._fetchData('user', userID);
+        console.log({rawUser});
         return {
             firstName: rawUser.first_text,
             lastName: rawUser.last_text,
             name: rawUser.first_last_text,
             teamNumT: rawUser.teamnumt_text,
             fetchedDate: new Date(),
+            profilePictureUrl: 'http:' + rawUser.picture_image,
         }
     }
 
@@ -238,27 +240,34 @@ export default class BubbleApi {
             },
             name: rawOption.name_text,
             height: rawOption.height_option_buttonheight,
-            imageURL: rawOption.image_image,
+            imagePointer: rawOption.image_image,
             sortOrder: rawOption.sortorder_number,
             id: optionID,
-        }
+        };
 
+        if (option.imagePointer) {
+            const imageUri = await this._fetchImage(option.imagePointer);
+            console.log({imageUri});
+            option.imageUri = imageUri;
+        }
         return option;
     }
 
+    static async _fetchImage(imagePointer) {
+        try {
+            const response = await fetch('https' + imagePointer);
+            const blob = await response.blob();
+            const imageUri = URL.createObjectURL(blob);
+            return imageUri;
+
+          } catch (error) {
+            ERROR('Error fetching and storing image:', error);
+          };
+
+    }
+
     // const fetchAndStoreImage = async () => {
-    //     try {
-    //       const response = await fetch('https://example.com/path/to/your/image.jpg');
-    //       const blob = await response.blob();
-    //       const imageUri = URL.createObjectURL(blob);
-  
-    //       // Store the image URI in AsyncStorage for offline access
-    //       await AsyncStorage.setItem('storedImageUri', imageUri);
-  
-    //       setImageUri(imageUri);
-    //     } catch (error) {
-    //       console.error('Error fetching and storing image:', error);
-    //     };
+
 }
 
 

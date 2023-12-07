@@ -47,24 +47,25 @@ export const AuthProvider = ({ children }) => {
         setIsLoading(true);
 
         try {
-            // BubbleApi.printToken(); // debug
             const logoutResult = await BubbleApi.apiLogout();
             LOG(logoutResult);
-
-            LOG({LOCALKEYS});
-            for (const [key, value] of Object.entries(LOCALKEYS)) {
-                AsyncStorage.removeItem(value);
-            }
-            setAppVariables({});
-            setColorDict({});
-            setUserInfo({});
-            setEventInfo({});
-
+            clearCache();
         } catch (err) {
             LOG(`logout error ${err}`);
         };
         setUserInfo({});
         setIsLoading(false);
+    };
+
+    const clearCache = async () => {
+        LOG({LOCALKEYS});
+        for (const [key, value] of Object.entries(LOCALKEYS)) {
+            AsyncStorage.removeItem(value);
+        }
+        setAppVariables({});
+        setColorDict({});
+        setUserInfo({});
+        setEventInfo({});
     };
 
     const isLoggedIn = async () => {

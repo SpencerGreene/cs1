@@ -5,7 +5,6 @@ export default StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: AppColors.background,
-        // backgroundColor: '#780000',
         alignItems: 'left',
         marginTop: StatusBar.currentHeight || 0,
     },
@@ -64,7 +63,7 @@ export default StyleSheet.create({
         width: 150, // Adjust the width as needed
         marginTop: 70, // Adjust the marginTop to position it below the profile image
         marginRight: 20,
-        backgroundColor: '#fff',
+        backgroundColor: AppColors.surface,
         borderRadius: 5,
         borderWidth: 1,
         borderColor: AppColors.lightGray,
