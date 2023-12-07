@@ -22,12 +22,18 @@ export default function ScoutPageGame({ gameState, setGameState, appVariables, c
         const fgHexColor = bgColor.contrastColor === 'Light' ? AppColors.contrastLight : AppColors.contrastDark;
         const bgHexColor = bgColor.hexColor;
         return [bgHexColor, fgHexColor];
-    }
+    };
+    const optionContainerHeight = option => {
+        const height1x = 35;
+        if (option.height === '3x') return 3 * height1x;
+        if (option.height === '2x') return 2 * height1x;
+        return height1x;
+    };
 
     const displayOption = option => {
         const [bgHexColor, fgHexColor] = optionColors(option, 'active');
         return (
-            <View style={styles.optionContainer} key={option.id}>
+            <View style={[styles.optionContainer, {minHeight: optionContainerHeight(option)}]} key={option.id}>
                 <Pressable style={[styles.optionButton, {backgroundColor: bgHexColor}]}>
                     <Text style={[styles.optionText, {color: fgHexColor}]}>{option.name}</Text>
                 </Pressable>
