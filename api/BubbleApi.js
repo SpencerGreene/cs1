@@ -50,15 +50,20 @@ export default class BubbleApi {
 
     static async apiGetUser(userID) {
         const rawUser = await this._fetchData('user', userID);
-        console.log({rawUser});
-        return {
+        const user = {
             firstName: rawUser.first_text,
             lastName: rawUser.last_text,
             name: rawUser.first_last_text,
             teamNumT: rawUser.teamnumt_text,
             fetchedDate: new Date(),
             profilePictureUrl: 'http:' + rawUser.picture_image,
+        };
+
+        if (rawUser.picture_image) {
+            user.profileBlobUri = await this._fetchImage(rawUser.picture_image);
         }
+
+        return user;
     }
 
     static async apiGetAppVariables() {
@@ -79,7 +84,7 @@ export default class BubbleApi {
 
         appVariables.game = await this._fetchGame(appVariables.gameID);
         appVariables.fetchedDate = new Date();
-        
+
         return appVariables;
     }
 
@@ -92,7 +97,7 @@ export default class BubbleApi {
         const rawColors = await this._searchData(
             'colors',
             [{
-                key: "deleted", 
+                key: "deleted",
                 constraint_type: "not equal",
                 value: "yes"
             }]
@@ -109,7 +114,7 @@ export default class BubbleApi {
                     name: rawColor.name_text,
                     analyzeTeamNumT
                 }
-            });
+        });
         colorDict.fetchedDate = new Date();
         colorDict.teamNumT = teamNumT;
 
@@ -124,7 +129,7 @@ export default class BubbleApi {
                 { matchNumber },
                 { headers: { Authorization: `Bearer ${this.apiToken}` } },
             );
-            
+
             return data.response;
         } catch (err) {
             ERROR(`setDefaultMatchNum fail`);
@@ -189,7 +194,7 @@ export default class BubbleApi {
             counterIDs.map(id => this._fetchCounterDefinition(id))
         );
         game.fetchedDate = new Date();
-        
+
         return game;
     }
 
@@ -247,7 +252,6 @@ export default class BubbleApi {
 
         if (option.imagePointer) {
             const imageUri = await this._fetchImage(option.imagePointer);
-            console.log({imageUri});
             option.imageUri = imageUri;
         }
         return option;
@@ -255,15 +259,13 @@ export default class BubbleApi {
 
     static async _fetchImage(imagePointer) {
         try {
-            const response = await fetch('https' + imagePointer);
+            const response = await fetch('https:' + imagePointer, {cache: 'no-cache'});
             const blob = await response.blob();
             const imageUri = URL.createObjectURL(blob);
             return imageUri;
-
-          } catch (error) {
+        } catch (error) {
             ERROR('Error fetching and storing image:', error);
-          };
-
+        };
     }
 
     // const fetchAndStoreImage = async () => {

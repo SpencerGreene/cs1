@@ -44,7 +44,8 @@ export default function ScoutPageGame({ gameState, setGameState, appVariables, c
             option.imagePointer 
             && <Image 
                 style={[styles.buttonImage, {width: imageHeight(option), height: imageHeight(option)}]} 
-                source={{uri: 'http:' + option.imagePointer}} 
+                // source={{uri: 'https:' + option.imagePointer}} 
+                source={{uri: option.imageUri}} 
             />
         ); 
 

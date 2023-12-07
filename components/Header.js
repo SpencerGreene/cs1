@@ -33,13 +33,13 @@ export default function Header({ gameState, maxGameTime, onTimeout }) {
     };
 
     const renderProfileContent = () => {
-        const { profilePictureUrl } = userInfo;
+        const { profilePictureUrl, profileBlobUri } = userInfo;
 
-        console.log({profilePictureUrl});
         if (profilePictureUrl) {
             return (
                 <Image
-                    source={{ uri: profilePictureUrl }}
+                    // source={{ uri: profilePictureUrl }}
+                    source={{ uri: profileBlobUri }}
                     style={styles.profileImage}
                 />
             );
@@ -130,14 +130,12 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         justifyContent: 'center',
         flexDirection: 'row',
-        // backgroundColor: AppColors.ltGreen,
     },
     phaseContainer: {
         flex: 6,
         minHeight: 40,
         alignSelf: 'center',
         justifyContent: 'center',
-        // backgroundColor: AppColors.ltBlue,
 
     },
     teamContainer: {
@@ -152,7 +150,6 @@ const styles = StyleSheet.create({
         flex: 1,
         alignSelf: 'center',
         alignItems: 'flex-end',
-        // backgroundColor: AppColors.ltPink,
     },
 
     // logo top left
@@ -216,7 +213,7 @@ const styles = StyleSheet.create({
         width: 30,
         height: 30,
         borderRadius: 15,
-        backgroundColor: 'lightgray', // Add a background color for the circle
+        backgroundColor: AppColors.lightGray, // Add a background color for the circle
         justifyContent: 'center',
         alignItems: 'center',
     },
