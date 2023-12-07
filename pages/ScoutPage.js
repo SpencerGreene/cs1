@@ -13,7 +13,6 @@ import Header from '../components/Header';
 import ScoutPageSelect from './ScoutPageSelect';
 import ScoutPageGame from './ScoutPageGame';
 import ButtonsFwdBack from '../components/ButtonsFwdBack';
-import Styles from '../styles/Styles';
 
 export default function ScoutPage() {
     const {
@@ -220,21 +219,26 @@ export default function ScoutPage() {
 
     const onTimeout = () => {
         const { phase } = gameState;
-        LOG('timeout', {override: gameState.phaseOverride});
+        LOG('timeout', { override: gameState.phaseOverride });
         if (!gameState.phaseOverride) setPhase(phase.forward, phase.forwardActions);
     }
 
     return (
-        <View>
+        <View style={styles.container}>
             <Header
                 gameState={gameState}
                 maxGameTime={maxGameTime()}
                 onTimeout={onTimeout}
             />
-            <View style={Styles.scoutContainer}>
+            <View style={styles.scoutContainer}>
                 {gameState.phase === PHASES.select
                     ? <ScoutPageSelect gameState={gameState} setGameState={setGameState} />
-                    : <ScoutPageGame gameState={gameState} setGameState={setGameState} appVariables={appVariables} />
+                    : <ScoutPageGame
+                        gameState={gameState}
+                        setGameState={setGameState}
+                        appVariables={appVariables}
+                        colorDict={colorDict}
+                      />
                 }
             </View>
             <ButtonsFwdBack gameState={gameState} setPhase={overridePhase} />
@@ -243,9 +247,9 @@ export default function ScoutPage() {
 }
 
 const styles = StyleSheet.create({
-    bottomNotes: {
-        marginTop: 60,
-        marginBottom: 100,
+    container: {
+        flex: 1,
+        flexDirection: 'column',
     },
     loginTitle: {
         marginTop: 30,
@@ -257,5 +261,16 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         marginBottom: 30,
         marginTop: 100,
+    },
+    scoutContainer: {
+        minWidth: "100%",
+        flex: 3,
+        paddingLeft: 10,
+        paddingRight: 10,
+        paddingTop: 30,
+        paddingBottom: 30,
+        minHeight: 480,
+        justifyContent: 'flex-start',
+        flexDirection: 'column',
     },
 });

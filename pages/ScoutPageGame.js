@@ -1,13 +1,12 @@
-import { StyleSheet, Text, View, TextInput, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, Pressable } from 'react-native';
 
 import React, { useContext, useEffect } from 'react';
-import Button from '../components/Button';
 
-import Styles from '../styles/Styles';
 import { AuthContext } from '../components/AuthProvider';
 import { LOG } from '../logConfig';
+import AppColors from '../styles/AppColors';
 
-export default function ScoutPageGame({ gameState, setGameState, appVariables }) {
+export default function ScoutPageGame({ gameState, setGameState, appVariables, colorDict }) {
     const { userInfo } = useContext(AuthContext);
 
     const { game } = appVariables;
@@ -17,12 +16,21 @@ export default function ScoutPageGame({ gameState, setGameState, appVariables })
         const matches = def.conditions.filter(cond => cond.type === conditionType);
         return matches.length > 0 ? matches[0] : null;
     };
+    const optionColors = (option, buttonState) => {
+        const bgColorID = option.colorIDs[buttonState] || appVariables.defaultColorIDs[buttonState];
+        const bgColor = colorDict[bgColorID];
+        const fgHexColor = bgColor.contrastColor === 'Light' ? AppColors.contrastLight : AppColors.contrastDark;
+        const bgHexColor = bgColor.hexColor;
+        return [bgHexColor, fgHexColor];
+    }
 
     const displayOption = option => {
-        LOG({option});
+        const [bgHexColor, fgHexColor] = optionColors(option, 'active');
         return (
-            <View style={styles.optionRow} key={option.id}>
-                <Text>{option.name}</Text>
+            <View style={styles.optionContainer} key={option.id}>
+                <Pressable style={[styles.optionButton, {backgroundColor: bgHexColor}]}>
+                    <Text style={[styles.optionText, {color: fgHexColor}]}>{option.name}</Text>
+                </Pressable>
             </View>
         );
     };
@@ -59,13 +67,10 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         flex: 1,
         minWidth: "100%",
+        backgroundColor: '#f1f1f1',
     },
     counterRow: {
         flexDirection: 'row',
-        flex: 1,
-        minHeight: 100,
-        maxHeight: 200,
-        backgroundColor: '#fe7265',
         color: 'black',
     },
     conditionCol: {
@@ -75,18 +80,20 @@ const styles = StyleSheet.create({
         color: 'black',
         backgroundColor: 'white',
     },
-    optionRow: {
-        borderWidth: 1,
-        flexDirection: 'row',
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
+    optionContainer: {
         maxHeight: 35,
         minHeight: 35,
-        borderRadius: 5,
+    },
+    optionButton: {
+        flex: 1, 
+        minWidth: '100%',
         marginTop: 5,
         marginBottom: 5,
-        backgroundColor: 'blue',
-        color: 'black',
+        borderRadius: 5,
+        justifyContent: 'center',
+    },
+    optionText: {
+        fontSize: 13,
+        alignSelf: 'center',
     }
 });

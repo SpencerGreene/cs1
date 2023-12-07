@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
     optionContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
+        minWidth: '100%'
     },
     optionButton: {
         backgroundColor: AppColors.background,
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center',
         marginVertical: 5,
-        minWidth: 60,
+        minWidth: 59,
         borderWidth: 1,
         borderColor: AppColors.lightGray,
     },

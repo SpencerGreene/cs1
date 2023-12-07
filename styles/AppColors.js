@@ -1,4 +1,4 @@
-export default {
+const appColors = {
     primary: '#1165EF', // blue
     text: '#0E1E2F',
     background: '#FFFFFF',
@@ -17,4 +17,9 @@ export default {
     bodyText: '#757F87',
     buttonInactiveBackground: '#E7E9EB',
 };
+
+appColors.contrastLight = appColors.lightGray;
+appColors.contrastDark  = appColors.bodyText;
+
+export default appColors;
 

@@ -4,7 +4,7 @@ import React, { useContext, useEffect } from 'react';
 
 import Styles from '../styles/Styles';
 import { AuthContext } from '../components/AuthProvider';
-import TeamPicker36 from '../components/TeamPicker6';
+import TeamPicker6 from '../components/TeamPicker6';
 import MatchPicker from '../components/MatchPicker';
 
 const label = (text, spacing) => (
@@ -30,8 +30,9 @@ export default function ScoutPageSelect({ gameState, setGameState }) {
 
     const setSelectedMatch = (matchType, matchNumber) => {
         const scoutSelectionValid = isValid(matchType, matchNumber, null);
-        setGameState({ ...gameState, scoutTeamNumT: null, allianceColor: null,
-            matchType, matchNumber, scoutSelectionValid 
+        setGameState({
+            ...gameState, scoutTeamNumT: null, allianceColor: null,
+            matchType, matchNumber, scoutSelectionValid
         });
     };
 
@@ -40,7 +41,7 @@ export default function ScoutPageSelect({ gameState, setGameState }) {
     }, [gameState.phase]);
 
     const eventBlock = () => (
-        <View style={{ flexDirection: 'row', marginTop: 10 }}>
+        <View style={styles.eventBlock}>
             <View style={{ flex: 1 }}>
                 {label("Season", 0)}
                 <Text style={[Styles.bodyText]}> {season} </Text >
@@ -53,11 +54,11 @@ export default function ScoutPageSelect({ gameState, setGameState }) {
     );
 
     const matchBlock = () => (
-        <View>
-            {label("Match", 55)}
-            <MatchPicker 
-                eventInfo={eventInfo} 
-                onMatchSelect={setSelectedMatch} 
+        <View style={styles.matchBlock}>
+            {label("Match", 0)}
+            <MatchPicker
+                eventInfo={eventInfo}
+                onMatchSelect={setSelectedMatch}
                 matchType={gameState.matchType}
                 matchNumber={gameState.matchNumber}
             />
@@ -67,10 +68,10 @@ export default function ScoutPageSelect({ gameState, setGameState }) {
     const teamBlock = () => {
         const alliances = matches && gameState.matchNumber && matches[gameState.matchNumber]?.alliances;
         return (
-            <View>
-                {alliances && label("Team", 40)}
-                <TeamPicker36
-                    choicesRed ={alliances ? alliances.red.team_keys  : []}
+            <View style={styles.teamBlock}>
+                {alliances && label("Team", 0)}
+                <TeamPicker6
+                    choicesRed={alliances ? alliances.red.team_keys : []}
                     choicesBlue={alliances ? alliances.blue.team_keys : []}
                     onOptionSelect={setSelectedTeam}
                     scoutTeamNumT={gameState.scoutTeamNumT}
@@ -80,30 +81,40 @@ export default function ScoutPageSelect({ gameState, setGameState }) {
     };
 
     return (
-        <View id="selectPage">
-            <View style={Styles.groupLeft}>
+        <View id="selectPage" style={styles.container}>
+            <View style={styles.eventBlock}>
                 {eventBlock()}
+            </View>
+
+            <View style={styles.matchBlock}>
                 {matchBlock()}
+            </View>
+            <View style={styles.teamBlock}>
                 {matches && gameState.matchType === 'Qual' && teamBlock()}
             </View>
+
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    bottomNotes: {
-        marginTop: 60,
-        marginBottom: 100,
+    container: {
+        flexDirection: 'column',
+        flex: 1,
+        // justifyContent: 'space-between',
     },
-    loginTitle: {
-        marginTop: 30,
-        marginBottom: 12,
+    eventBlock: {
+        flex: 2,
+        flexDirection: 'row',
+        marginTop: 10,
     },
-    image: {
-        width: 192,
-        height: 51.5,
-        alignSelf: 'center',
-        marginBottom: 30,
-        marginTop: 100,
+    matchBlock: {
+        flex: 2,
+        // backgroundColor: 'red',
     },
+    teamBlock: {
+        flex: 4,
+        justifyContent: 'center',
+    },
+
 });

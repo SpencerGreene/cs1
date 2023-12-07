@@ -75,12 +75,11 @@ const MatchPicker = ({ eventInfo, onMatchSelect, matchType, matchNumber }) => {
 
 const styles = StyleSheet.create({
     optionContainer: {
-        flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        flex: 1,
+        flexDirection: 'row',
+        minWidth: '50%',
         paddingLeft: 20,
-        borderWidth: 2,
     },
     optionButton: {
         backgroundColor: AppColors.background,
@@ -108,7 +107,8 @@ const styles = StyleSheet.create({
     matchInput: {
         borderColor: AppColors.lightGray,
         height: 40,
-        maxWidth: 40,
+        minWidth: 60,
+        maxWidth: 60,
         paddingHorizontal: 10,
         marginLeft: 0,
         borderWidth: 1,
