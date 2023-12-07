@@ -268,7 +268,6 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 10,
         paddingTop: 30,
-        paddingBottom: 30,
         minHeight: 480,
         justifyContent: 'flex-start',
         flexDirection: 'column',
