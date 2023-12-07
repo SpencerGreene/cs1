@@ -245,6 +245,20 @@ export default class BubbleApi {
 
         return option;
     }
+
+    // const fetchAndStoreImage = async () => {
+    //     try {
+    //       const response = await fetch('https://example.com/path/to/your/image.jpg');
+    //       const blob = await response.blob();
+    //       const imageUri = URL.createObjectURL(blob);
+  
+    //       // Store the image URI in AsyncStorage for offline access
+    //       await AsyncStorage.setItem('storedImageUri', imageUri);
+  
+    //       setImageUri(imageUri);
+    //     } catch (error) {
+    //       console.error('Error fetching and storing image:', error);
+    //     };
 }
 
 
