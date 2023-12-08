@@ -34,8 +34,8 @@ export default function ScoutPageGame({ gameState, setGameState }) {
 
         // Clean up object URLs when the component unmounts
         return () => {
-            for (const id in imageURIs) {
-                const uri = imageURIs[id];
+            for (const id in uriDict) {
+                const uri = uriDict[id];
                 if (uri) {
                     URL.revokeObjectURL(uri);
                 }
