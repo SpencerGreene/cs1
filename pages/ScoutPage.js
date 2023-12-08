@@ -109,12 +109,7 @@ export default function ScoutPage() {
     }, []); // Empty dependency array to run only on mount
 
     const hydrateBlobDict = async blobDict => {
-        // const result = {};
-        // Object.keys(blobDict).forEach(async key => {
-        //     const { saveImage } = blobDict[key];
-        //     const blob = await savedImageToBlob(saveImage);
-        //     result[key] = { saveImage, blob };
-        // });
+        if (!blobDict) return;
         const keys = Object.keys(blobDict);
         const resultsArray = await Promise.all(keys.map(async key => {
             const { saveImage } = blobDict[key];

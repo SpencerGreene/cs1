@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Image, Pressable } from 'react-native';
 
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { AuthContext } from '../components/AuthProvider';
 import { LOG } from '../logConfig';
@@ -12,6 +12,38 @@ export default function ScoutPageGame({ gameState, setGameState }) {
 
     const { game } = appVariables;
     const { counterDefs } = game;
+
+    const [uriDict, setUriDict] = useState({});
+
+    // create URIs from blobs when component mounts
+    useEffect(() => {
+        const createURIs = async () => {
+            const uris = {};
+
+            for (const id in blobDict) {
+                const blob = blobDict[id].blob;
+                const uri = blob ? URL.createObjectURL(blob) : null;
+                uris[id] = uri;
+            }
+
+            setUriDict(uris);
+            console.log({uris});
+        };
+
+        createURIs();
+
+        // Clean up object URLs when the component unmounts
+        return () => {
+            for (const id in imageURIs) {
+                const uri = imageURIs[id];
+                if (uri) {
+                    URL.revokeObjectURL(uri);
+                }
+            }
+        };
+    }, []); // Run this effect only once when the component mounts
+
+    // local helper functions
     const phaseCounterDefs = phase => counterDefs.filter(def => def.gamePhases.includes(phase.key));
     const counterCondition = (def, conditionType) => {
         const matches = def.conditions.filter(cond => cond.type === conditionType);
@@ -41,14 +73,7 @@ export default function ScoutPageGame({ gameState, setGameState }) {
         const [bgHexColor, fgHexColor] = optionColors(option, 'active');
         const text = (<Text style={[styles.optionText, { color: fgHexColor }]}>{option.name}</Text>);
 
-        let blob = null;
-        let imageUri = null;
-        if (option.imagePointer) {
-            blob = blobDict[option.id].blob;
-            console.log({blob});
-            imageUri = blob && URL.createObjectURL(blob);
-        }
-
+        const imageUri = uriDict[option.id];
         const image = (
             imageUri
             && <Image
