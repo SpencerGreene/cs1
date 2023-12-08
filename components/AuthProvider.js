@@ -5,6 +5,7 @@ import { LOG } from '../logConfig.js';
 import { LOCALKEYS } from '../config';
 
 import BubbleApi from '../api/BubbleApi';
+import { savedImageToBlob } from '../helpers/imageHelpers.js';
 
 
 export const AuthContext = createContext();
@@ -76,6 +77,9 @@ export const AuthProvider = ({ children }) => {
 
             if (currentUserJSON && currentUserJSON !== "undefined") {
                 const currentUser = JSON.parse(currentUserJSON);
+                if (currentUser.profileSaveImage) {
+                    currentUser.profileBlob = await savedImageToBlob(currentUser.profileSaveImage);
+                }
                 if (currentUser && currentUser.expireTime > new Date().getTime()) {
                     setUserInfo(currentUser);
                     BubbleApi.setApiToken(currentUser.token);

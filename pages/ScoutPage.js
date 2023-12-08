@@ -1,4 +1,4 @@
-import { StyleSheet, View, Image } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useContext, useEffect, useState } from 'react';
 
@@ -13,6 +13,7 @@ import Header from '../components/Header';
 import ScoutPageSelect from './ScoutPageSelect';
 import ScoutPageGame from './ScoutPageGame';
 import ButtonsFwdBack from '../components/ButtonsFwdBack';
+import { savedImageToBlob } from '../helpers/imageHelpers';
 
 export default function ScoutPage() {
     const {
@@ -107,6 +108,26 @@ export default function ScoutPage() {
         populateLastChanged();
     }, []); // Empty dependency array to run only on mount
 
+    const hydrateBlobDict = async blobDict => {
+        // const result = {};
+        // Object.keys(blobDict).forEach(async key => {
+        //     const { saveImage } = blobDict[key];
+        //     const blob = await savedImageToBlob(saveImage);
+        //     result[key] = { saveImage, blob };
+        // });
+        const keys = Object.keys(blobDict);
+        const resultsArray = await Promise.all(keys.map(async key => {
+            const { saveImage } = blobDict[key];
+            const blob = await savedImageToBlob(saveImage);
+            const imageUri = URL.createObjectURL(userInfo.profileBlob);
+
+            return { [key]: { saveImage, blob } };
+        }));
+
+        const result = Object.assign({}, ...resultsArray);
+        return result;
+    };
+
     // get appVariables from cache or api
     useEffect(() => {
         const setStartingMatch = appVar => {
@@ -126,7 +147,10 @@ export default function ScoutPage() {
                 // If it exists, set it in the state
                 const parsedAppVariables = JSON.parse(storedAppVariables);
                 parsedAppVariables.fetchedDate = new Date(parsedAppVariables.fetchedDate);
+                parsedAppVariables.blobDict = await hydrateBlobDict(parsedAppVariables.blobDict);
+
                 setAppVariables(parsedAppVariables);
+
                 LOG('app variables found in cache', parsedAppVariables);
                 setStartingMatch(parsedAppVariables);
             } else {
@@ -233,12 +257,7 @@ export default function ScoutPage() {
             <View style={styles.scoutContainer}>
                 {gameState.phase === PHASES.select
                     ? <ScoutPageSelect gameState={gameState} setGameState={setGameState} />
-                    : <ScoutPageGame
-                        gameState={gameState}
-                        setGameState={setGameState}
-                        appVariables={appVariables}
-                        colorDict={colorDict}
-                    />
+                    : <ScoutPageGame gameState={gameState} setGameState={setGameState} />
                 }
             </View>
             <ButtonsFwdBack gameState={gameState} setPhase={overridePhase} />

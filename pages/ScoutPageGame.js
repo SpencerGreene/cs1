@@ -1,13 +1,14 @@
 import { StyleSheet, Text, View, Image, Pressable } from 'react-native';
 
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 
 import { AuthContext } from '../components/AuthProvider';
 import { LOG } from '../logConfig';
 import AppColors from '../styles/AppColors';
 
-export default function ScoutPageGame({ gameState, setGameState, appVariables, colorDict }) {
-    const { userInfo } = useContext(AuthContext);
+export default function ScoutPageGame({ gameState, setGameState }) {
+    const { userInfo, appVariables, setAppVariables, colorDict } = useContext(AuthContext);
+    const { blobDict } = appVariables;
 
     const { game } = appVariables;
     const { counterDefs } = game;
@@ -34,24 +35,31 @@ export default function ScoutPageGame({ gameState, setGameState, appVariables, c
         if (option.height === '3x') return 2 * height1x;
         if (option.height === '2x') return 2 * height1x - 20;
         return height1x - 10;
-    }
+    };
 
     const displayOption = option => {
         const [bgHexColor, fgHexColor] = optionColors(option, 'active');
-        const text = (<Text style={[styles.optionText, {color: fgHexColor}]}>{option.name}</Text>);
+        const text = (<Text style={[styles.optionText, { color: fgHexColor }]}>{option.name}</Text>);
+
+        let blob = null;
+        let imageUri = null;
+        if (option.imagePointer) {
+            blob = blobDict[option.id].blob;
+            console.log({blob});
+            imageUri = blob && URL.createObjectURL(blob);
+        }
 
         const image = (
-            option.imagePointer 
-            && <Image 
-                style={[styles.buttonImage, {width: imageHeight(option), height: imageHeight(option)}]} 
-                // source={{uri: 'https:' + option.imagePointer}} 
-                source={{uri: option.imageUri}} 
+            imageUri
+            && <Image
+                style={[styles.buttonImage, { width: imageHeight(option), height: imageHeight(option) }]}
+                source={{ uri: imageUri }}
             />
-        ); 
+        );
 
         return (
-            <View style={[styles.optionContainer, {minHeight: optionContainerHeight(option)}]} key={option.id}>
-                <Pressable style={[styles.optionButton, {backgroundColor: bgHexColor}]}>
+            <View style={[styles.optionContainer, { minHeight: optionContainerHeight(option) }]} key={option.id}>
+                <Pressable style={[styles.optionButton, { backgroundColor: bgHexColor }]}>
                     {image || text}
                 </Pressable>
             </View>
@@ -105,7 +113,7 @@ const styles = StyleSheet.create({
         minHeight: 35,
     },
     optionButton: {
-        flex: 1, 
+        flex: 1,
         minWidth: '100%',
         marginTop: 5,
         marginBottom: 5,

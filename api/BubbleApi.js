@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { DATA_URL, WORKFLOW_URL } from '../config.js';
 import { LOG, ERROR } from '../logConfig.js';
+import { BlobToSaveImage } from '../helpers/imageHelpers.js';
 
 export default class BubbleApi {
     static apiToken = '';
@@ -60,7 +61,9 @@ export default class BubbleApi {
         };
 
         if (rawUser.picture_image) {
-            user.profileBlobUri = await this._fetchImage(rawUser.picture_image);
+            const { blob, contentType } = await this._fetchImage(rawUser.picture_image);
+            user.profileBlob = blob;
+            user.profileSaveImage = await BlobToSaveImage(blob, contentType);
         }
 
         return user;
@@ -82,7 +85,9 @@ export default class BubbleApi {
             teamNumT: rawAppVariables.appVariables.analyzeteamnumt_text,
         };
 
-        appVariables.game = await this._fetchGame(appVariables.gameID);
+        const blobDict = {};
+        appVariables.game = await this._fetchGame(appVariables.gameID, blobDict);
+        appVariables.blobDict = blobDict;
         appVariables.fetchedDate = new Date();
 
         return appVariables;
@@ -180,7 +185,7 @@ export default class BubbleApi {
         }
     }
 
-    static async _fetchGame(gameID) {
+    static async _fetchGame(gameID, blobDict) {
         const rawGame = await this._fetchData('game', gameID);
         let game = {
             season: rawGame.season_text,
@@ -191,14 +196,14 @@ export default class BubbleApi {
 
         const counterIDs = rawGame.counters_list_custom_counter;
         game.counterDefs = await Promise.all(
-            counterIDs.map(id => this._fetchCounterDefinition(id))
+            counterIDs.map(id => this._fetchCounterDefinition(id, blobDict))
         );
         game.fetchedDate = new Date();
 
         return game;
     }
 
-    static async _fetchCounterDefinition(counterID) {
+    static async _fetchCounterDefinition(counterID, blobDict) {
         const rawCounter = await this._fetchData('counterdefinition', counterID);
         let counterDef = {
             name: rawCounter.name_text,
@@ -210,13 +215,13 @@ export default class BubbleApi {
 
         const conditionIDs = rawCounter.conditions_list_custom_gamechoice;
         counterDef.conditions = await Promise.all(
-            conditionIDs.map(id => this._fetchCounterCondition(id))
+            conditionIDs.map(id => this._fetchCounterCondition(id, blobDict))
         );
 
         return counterDef;
     }
 
-    static async _fetchCounterCondition(counterConditionID) {
+    static async _fetchCounterCondition(counterConditionID, blobDict) {
         const rawCondition = await this._fetchData('countercondition', counterConditionID);
         let counterCondition = {
             sortOrder: rawCondition.typesortorder_number,
@@ -228,13 +233,13 @@ export default class BubbleApi {
         const optionIDs = rawCondition.choices_list_custom_counterconditionoption;
 
         counterCondition.options = await Promise.all(
-            optionIDs.map(id => this._fetchCounterConditionOption(id))
+            optionIDs.map(id => this._fetchCounterConditionOption(id, blobDict))
         );
 
         return counterCondition;
     }
 
-    static async _fetchCounterConditionOption(optionID) {
+    static async _fetchCounterConditionOption(optionID, blobDict) {
         const rawOption = await this._fetchData('counterconditionoption', optionID);
         let option = {
             colorIDs: {
@@ -251,8 +256,10 @@ export default class BubbleApi {
         };
 
         if (option.imagePointer) {
-            const imageUri = await this._fetchImage(option.imagePointer);
-            option.imageUri = imageUri;
+            const {blob, contentType} = await this._fetchImage(option.imagePointer);
+            option.imageBlob = blob;
+            const saveImage = await BlobToSaveImage(blob, contentType);
+            blobDict[optionID] = {blob, saveImage};
         }
         return option;
     }
@@ -260,16 +267,13 @@ export default class BubbleApi {
     static async _fetchImage(imagePointer) {
         try {
             const response = await fetch('https:' + imagePointer, {cache: 'no-cache'});
+            const contentType = response.headers.get('content-type');
             const blob = await response.blob();
-            const imageUri = URL.createObjectURL(blob);
-            return imageUri;
+            return {blob, contentType};
         } catch (error) {
             ERROR('Error fetching and storing image:', error);
         };
     }
-
-    // const fetchAndStoreImage = async () => {
-
 }
 
 

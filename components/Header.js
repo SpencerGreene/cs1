@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
     StyleSheet, View, Image, Text,
     Modal, Pressable,
@@ -15,6 +15,7 @@ import CountdownTimer from './CountdownTimer';
 export default function Header({ gameState, maxGameTime, onTimeout }) {
     const { userInfo, logout } = useContext(AuthContext);
     const [isModalVisible, setModalVisible] = useState(false);
+    const [profileUri, setProfileUri] = useState(null);
 
     const toggleModal = () => { setModalVisible(!isModalVisible); };
     const handleLogout = () => { setModalVisible(false); logout(); };
@@ -32,14 +33,25 @@ export default function Header({ gameState, maxGameTime, onTimeout }) {
         return ''; // Return an empty string if no initials are available
     };
 
+    useEffect(() => {
+        const makeUri = async () => {
+            const imageUri = URL.createObjectURL(userInfo.profileBlob);
+            await setProfileUri(imageUri);
+        };
+
+        if (userInfo.profileBlob) makeUri();
+
+        return () => { profileUri && URL.revokeObjectURL(profileUri); };    // clean up
+    }, [userInfo]);
+
     const renderProfileContent = () => {
         const { profilePictureUrl, profileBlobUri } = userInfo;
 
-        if (profilePictureUrl) {
+        if (profileUri) {
             return (
                 <Image
                     // source={{ uri: profilePictureUrl }}
-                    source={{ uri: profileBlobUri }}
+                    source={{ uri: profileUri }}
                     style={styles.profileImage}
                 />
             );
