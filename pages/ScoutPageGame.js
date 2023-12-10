@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Image, Pressable, Platform } from 'react-native';
 
 import React, { useContext, useEffect, useState } from 'react';
 
@@ -22,7 +22,12 @@ export default function ScoutPageGame({ gameState, setGameState }) {
 
             for (const id in blobDict) {
                 const blob = blobDict[id].blob;
-                const uri = blob ? URL.createObjectURL(blob) : null;
+                let uri;
+                if (Platform.OS === 'android') {
+                    console.log('punting, Android');
+                } else {
+                    uri = blob ? URL.createObjectURL(blob) : null;
+                }
                 uris[id] = uri;
             }
 

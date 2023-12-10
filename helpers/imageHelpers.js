@@ -1,30 +1,38 @@
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { blobToBase64String, base64StringToBlob } from 'blob-util'
+import { decode, encode } from 'base-64';
+
+if (!global.btoa) global.btoa = encode;
+if (!global.atob) global.atob = decode;
+
 // Helper function to convert blob to base64 in React Native
-export const BlobToSaveImage = (blob, contentType) => {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onerror = reject;
-        reader.onload = () => {
-            const imageData = reader.result.split(',')[1];
-            resolve({ imageData, contentType });
-        };
-        reader.readAsDataURL(blob);
-    });
+export const BlobToSaveImage = async (blob, contentType) => {
+    const imageData = await blobToBase64String(blob);
+    return { imageData, contentType };
 };
 
-export const savedImageToBlob = async (saveImage) => {
-    try {
-        const response = await fetch(`data:image/jpeg;base64,${saveImage.imageData}`);
-        const blob = await response.blob();
-        return blob;
-    } catch (error) {
-        console.error('Error converting base64 to blob:', error);
-        throw error;
+export const savedImageToBlob = async (savedImage) => {
+    if (!savedImage) return null;
+    console.log({savedImage});
+    console.log('os is', Platform.OS);
+    if (Platform.OS === 'android') {
+        console.log('Android, dude!');
+        return null;
+    } else {
+        try {
+            const blob = base64StringToBlob(savedImage.imageData);
+            return blob;
+        } catch (error) {
+            console.error('Error converting base64 to blob:', error);
+            throw error;
+        }
     }
 };
 
+
+// NOT USED (yet)
 // Function to save data to storage
 export const saveData = async (key, data) => {
     try {

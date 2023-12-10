@@ -84,6 +84,7 @@ export default class BubbleApi {
             defaultMatchNum: rawAppVariables.appVariables.default_match_number_number,
             teamNumT: rawAppVariables.appVariables.analyzeteamnumt_text,
         };
+        console.log('got raw app variables');
 
         const blobDict = {};
         appVariables.game = await this._fetchGame(appVariables.gameID, blobDict);
@@ -187,6 +188,7 @@ export default class BubbleApi {
 
     static async _fetchGame(gameID, blobDict) {
         const rawGame = await this._fetchData('game', gameID);
+        console.log('got raw game');
         let game = {
             season: rawGame.season_text,
             autoTeleSeconds: rawGame.autoteleseconds_number,
@@ -205,6 +207,7 @@ export default class BubbleApi {
 
     static async _fetchCounterDefinition(counterID, blobDict) {
         const rawCounter = await this._fetchData('counterdefinition', counterID);
+        console.log('got raw counterDef');
         let counterDef = {
             name: rawCounter.name_text,
             scoutDisplayName: rawCounter.scoutdisplayname__boolean,
@@ -223,6 +226,8 @@ export default class BubbleApi {
 
     static async _fetchCounterCondition(counterConditionID, blobDict) {
         const rawCondition = await this._fetchData('countercondition', counterConditionID);
+        console.log('got raw condition');
+
         let counterCondition = {
             sortOrder: rawCondition.typesortorder_number,
             name: rawCondition.display_text,
@@ -241,6 +246,7 @@ export default class BubbleApi {
 
     static async _fetchCounterConditionOption(optionID, blobDict) {
         const rawOption = await this._fetchData('counterconditionoption', optionID);
+        console.log('got raw option');
         let option = {
             colorIDs: {
                 active: rawOption.coloractive_custom_colors,
