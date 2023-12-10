@@ -7,7 +7,7 @@ import { LOG } from '../logConfig';
 import AppColors from '../styles/AppColors';
 
 export default function ScoutPageGame({ gameState, setGameState }) {
-    const { userInfo, appVariables, setAppVariables, colorDict } = useContext(AuthContext);
+    const { userInfo, appVariables, colorDict } = useContext(AuthContext);
     const { blobDict } = appVariables;
 
     const { game } = appVariables;
@@ -74,6 +74,9 @@ export default function ScoutPageGame({ gameState, setGameState }) {
         const text = (<Text style={[styles.optionText, { color: fgHexColor }]}>{option.name}</Text>);
 
         const imageUri = uriDict[option.id];
+        const imageUri2 = blobDict[option.id]?.saveImage?.imageData;
+        const imageUri3 = blobDict[option.id]?.blob;
+        console.log({imageUri, imageUri2, imageUri3});
         const image = (
             imageUri
             && <Image

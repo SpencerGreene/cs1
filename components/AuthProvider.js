@@ -1,7 +1,7 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useEffect, useState } from 'react';
-import { LOG } from '../logConfig.js';
+import { INFO, LOG } from '../logConfig.js';
 import { LOCALKEYS } from '../config';
 
 import BubbleApi from '../api/BubbleApi';
@@ -74,6 +74,7 @@ export const AuthProvider = ({ children }) => {
             setSplashLoading(true);
 
             const currentUserJSON = await AsyncStorage.getItem('userInfo');
+            console.log({currentUserJSON});
 
             if (currentUserJSON && currentUserJSON !== "undefined") {
                 const currentUser = JSON.parse(currentUserJSON);
@@ -83,7 +84,7 @@ export const AuthProvider = ({ children }) => {
                 if (currentUser && currentUser.expireTime > new Date().getTime()) {
                     setUserInfo(currentUser);
                     BubbleApi.setApiToken(currentUser.token);
-                    LOG('user found in cache', currentUser);
+                    INFO('user found in cache', currentUser);
                 }
             } else {
                 LOG('no cached user found')
