@@ -36,7 +36,12 @@ export const AuthProvider = ({ children }) => {
             BubbleApi.setApiToken(loginUser.token);
             await AsyncStorage.setItem('userInfo', JSON.stringify(loginUser));
 
-            LOG('fetched user', loginUser);
+            const imgSize = loginUser.profileSaveImage.imageData.length;
+            const imgDisp = `String of ${imgSize} char`;
+            const displayUser = {...loginUser};
+            displayUser.profileSaveImage.imageData = imgDisp;
+
+            console.log('fetched user', {loginUser: displayUser});
         } else {
             alert('Email / password incorrect');
         }
@@ -49,17 +54,17 @@ export const AuthProvider = ({ children }) => {
 
         try {
             const logoutResult = await BubbleApi.apiLogout();
-            LOG(logoutResult);
+            console.log(logoutResult);
             clearCache();
         } catch (err) {
-            LOG(`logout error ${err}`);
+            console.log(`logout error ${err}`);
         };
         setUserInfo({});
         setIsLoading(false);
     };
 
     const clearCache = async () => {
-        LOG({LOCALKEYS});
+        console.log({ LOCALKEYS });
         for (const [key, value] of Object.entries(LOCALKEYS)) {
             AsyncStorage.removeItem(value);
         }
@@ -72,14 +77,13 @@ export const AuthProvider = ({ children }) => {
     const isLoggedIn = async () => {
         try {
             setSplashLoading(true);
-
             const currentUserJSON = await AsyncStorage.getItem('userInfo');
-            console.log({currentUserJSON});
 
+            // console.log({currentUserJSON});
             if (currentUserJSON && currentUserJSON !== "undefined") {
                 const currentUser = JSON.parse(currentUserJSON);
                 if (currentUser.profileSaveImage) {
-                    currentUser.profileBlob = await savedImageToBlob(currentUser.profileSaveImage);
+                    // currentUser.profileBlob = await savedImageToBlob(currentUser.profileSaveImage);
                 }
                 if (currentUser && currentUser.expireTime > new Date().getTime()) {
                     setUserInfo(currentUser);
@@ -87,13 +91,13 @@ export const AuthProvider = ({ children }) => {
                     INFO('user found in cache', currentUser);
                 }
             } else {
-                LOG('no cached user found')
+                console.log('no cached user found')
             }
 
             setSplashLoading(false);
         } catch (err) {
             setSplashLoading(false);
-            LOG(`isLoggedIn error ${err}`);
+            console.log(`isLoggedIn error ${err}`);
         }
     };
 

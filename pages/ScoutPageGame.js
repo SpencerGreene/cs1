@@ -74,7 +74,7 @@ export default function ScoutPageGame({ gameState, setGameState }) {
         const text = (<Text style={[styles.optionText, { color: fgHexColor }]}>{option.name}</Text>);
 
         const imageUri = uriDict[option.id];
-        const imageUri2 = blobDict[option.id]?.saveImage?.imageData;
+        const imageUri2 = blobDict[option.id]?.saveImaged?.imageData;
         const imageUri3 = blobDict[option.id]?.blob;
         console.log({imageUri, imageUri2, imageUri3});
         const image = (

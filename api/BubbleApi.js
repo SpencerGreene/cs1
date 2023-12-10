@@ -28,7 +28,7 @@ export default class BubbleApi {
                 expireTime: new Date().getTime() + data?.response?.expires * 1000,
             };
 
-            LOG('received token expires: ', Date(userInfo.expireTime).toLocaleString());
+            console.log('received token expires: ', Date(userInfo.expireTime).toLocaleString());
 
             return userInfo;
         } catch (err) {
@@ -143,7 +143,7 @@ export default class BubbleApi {
 
     // public debug functions
     static printToken() {
-        LOG('my token is', this.apiToken);
+        console.log('my token is', this.apiToken);
     }
 
     // private functions
@@ -258,8 +258,8 @@ export default class BubbleApi {
         if (option.imagePointer) {
             const {blob, contentType} = await this._fetchImage(option.imagePointer);
             option.imageBlob = blob;
-            const saveImage = await BlobToSaveImage(blob, contentType);
-            blobDict[optionID] = {blob, saveImage};
+            const savedImage = await BlobToSaveImage(blob, contentType);
+            blobDict[optionID] = { blob, savedImage };
         }
         return option;
     }

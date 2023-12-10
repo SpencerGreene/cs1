@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useContext, useEffect, useState } from 'react';
 
-import { ERROR, LOG } from '../logConfig';
+import { ERROR, INFO, LOG } from '../logConfig';
 import { AuthContext } from '../components/AuthProvider';
 
 import BubbleApi from '../api/BubbleApi';
@@ -42,7 +42,7 @@ export default function ScoutPage() {
     const maxGameTime = () => 150 + appVariables?.game?.autoTeleSeconds;
 
     const doAction = action => {
-        LOG('action=', action);
+        console.log('action=', action);
         switch (action) {
             case ACTIONS.clearConditions:
                 break;
@@ -87,7 +87,7 @@ export default function ScoutPage() {
         const phaseUpdate = { phase: newPhase };
         const actionUpdates = actions ? actions.map(action => doAction(action)) : [];
         const updates = Object.assign(phaseUpdate, ...actionUpdates);
-        LOG({ actions, actionUpdates, updates });
+        console.log({ actions, actionUpdates, updates });
         setGameState({ ...gameState, ...updates });
     };
 
@@ -102,7 +102,7 @@ export default function ScoutPage() {
             const apiLastChanged = await BubbleApi.apiGetLastChanged();
             setLastChanged(apiLastChanged);
 
-            LOG('last changed loaded from api', apiLastChanged);
+            console.log('last changed loaded from api', apiLastChanged);
         };
 
         populateLastChanged();
@@ -110,16 +110,19 @@ export default function ScoutPage() {
 
     const hydrateBlobDict = async blobDict => {
         if (!blobDict) return;
+        console.log('hydrating before: ', {blobDict});
         const keys = Object.keys(blobDict);
         const resultsArray = await Promise.all(keys.map(async key => {
-            const { saveImage } = blobDict[key];
-            const blob = await savedImageToBlob(saveImage);
-            const imageUri = URL.createObjectURL(userInfo.profileBlob);
+            const { savedImage } = blobDict[key];
+            const blob = await savedImageToBlob(savedImage);
+            const imageUri = URL.createObjectURL(blob);
 
-            return { [key]: { saveImage, blob } };
+            return { [key]: { savedImage, blob } };
         }));
 
         const result = Object.assign({}, ...resultsArray);
+        console.log('hydrating after: ', {blobDict: result});
+
         return result;
     };
 
@@ -131,7 +134,7 @@ export default function ScoutPage() {
 
         const populateAppVariables = async () => {
             if (appVariables && userInfo && appVariables.teamNumT === userInfo.teamNumT) {
-                LOG('app Variables already in memory', appVariables);
+                console.log('app Variables already in memory', appVariables);
                 setStartingMatch(appVariables);
                 return;
             }
@@ -146,7 +149,7 @@ export default function ScoutPage() {
 
                 setAppVariables(parsedAppVariables);
 
-                LOG('app variables found in cache', parsedAppVariables);
+                console.log('app variables found in cache', parsedAppVariables);
                 setStartingMatch(parsedAppVariables);
             } else {
                 // If not, fetch it from the API
@@ -155,7 +158,7 @@ export default function ScoutPage() {
 
                 // Store it in AsyncStorage for future use
                 await AsyncStorage.setItem(LOCALKEYS.APPVAR, JSON.stringify(apiAppVariables));
-                LOG('app variables loaded from api', apiAppVariables);
+                console.log('app variables loaded from api', apiAppVariables);
                 setStartingMatch(apiAppVariables);
             }
         };
@@ -169,7 +172,7 @@ export default function ScoutPage() {
 
         // Store it in AsyncStorage for future use
         await AsyncStorage.setItem(LOCALKEYS.EVENT, JSON.stringify(apiEventInfo));
-        LOG('eventInfo loaded from api', apiEventInfo);
+        INFO('eventInfo loaded from api', apiEventInfo);
     };
 
     // get eventInfo from cache or API - depends on eventKey
@@ -187,7 +190,7 @@ export default function ScoutPage() {
 
             // 1 - already in React state
             if (validEvent(eventInfo)) {
-                LOG('eventInfo already in memory', eventInfo);
+                console.log('eventInfo already in memory', eventInfo);
                 return;
             }
 
@@ -195,7 +198,7 @@ export default function ScoutPage() {
             const parsedEventInfo = JSON.parse(await AsyncStorage.getItem(LOCALKEYS.EVENT));
             if (validEvent(parsedEventInfo)) {
                 setEventInfo(parsedEventInfo);
-                LOG('eventInfo found in cache', parsedEventInfo);
+                console.log('eventInfo found in cache', parsedEventInfo);
                 return;
             }
 
@@ -218,7 +221,7 @@ export default function ScoutPage() {
 
                 if (parsedColorDict.teamNumT === userInfo.teamNumT) {
                     setColorDict(parsedColorDict);
-                    LOG('color dict found in cache', parsedColorDict);
+                    console.log('color dict found in cache', parsedColorDict);
                     return;
                 }
             }
@@ -229,7 +232,7 @@ export default function ScoutPage() {
 
             // Store it in AsyncStorage for future use
             await AsyncStorage.setItem(LOCALKEYS.COLORDICT, JSON.stringify(apiColorDict));
-            LOG('color dict loaded from api');
+            console.log('color dict loaded from api');
 
         };
 
@@ -238,7 +241,7 @@ export default function ScoutPage() {
 
     const onTimeout = () => {
         const { phase } = gameState;
-        LOG('timeout', { override: gameState.phaseOverride });
+        console.log('timeout', { override: gameState.phaseOverride });
         if (!gameState.phaseOverride) setPhase(phase.forward, phase.forwardActions);
     }
 

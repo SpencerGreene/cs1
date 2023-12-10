@@ -35,8 +35,16 @@ export default function Header({ gameState, maxGameTime, onTimeout }) {
 
     useEffect(() => {
         const makeUri = async () => {
-            const imageUri = URL.createObjectURL(userInfo.profileBlob);
-            await setProfileUri(imageUri);
+            try {
+                const imageUri = URL.createObjectURL(userInfo.profileBlob);
+                await setProfileUri(imageUri);
+                // await setProfileUri(userInfo.profileBlob);
+            } catch(err) {
+                console.error('problem with profile url create', err)
+                console.log({blob: userInfo.profileBlob});
+            }
+
+            // await setProfileUri(userInfo.profilePictureUrl);
         };
 
         if (userInfo.profileBlob) makeUri();
