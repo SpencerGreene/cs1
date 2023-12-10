@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Image, Pressable, Platform } from 'react-native';
 
 import React, { useContext, useEffect, useState } from 'react';
 
@@ -17,6 +17,11 @@ export default function ScoutPageGame({ gameState, setGameState }) {
 
     // create URIs from blobs when component mounts
     useEffect(() => {
+        if (Platform.OS === 'android') {
+            setUriDict({});
+            return;
+        }
+
         const createURIs = async () => {
             const uris = {};
 

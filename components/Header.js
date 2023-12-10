@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import {
     StyleSheet, View, Image, Text,
-    Modal, Pressable,
+    Modal, Pressable, Platform,
 } from 'react-native';
 
 import { AuthContext } from '../components/AuthProvider';
@@ -34,6 +34,8 @@ export default function Header({ gameState, maxGameTime, onTimeout }) {
     };
 
     useEffect(() => {
+        if (Platform.OS === 'android') return;
+
         const makeUri = async () => {
             const imageUri = URL.createObjectURL(userInfo.profileBlob);
             await setProfileUri(imageUri);
@@ -129,7 +131,6 @@ export default function Header({ gameState, maxGameTime, onTimeout }) {
         </View>
     );
 
-    LOG(gameState);
     return gameState.phase === PHASES.select ? headerSelect : headerGame;
 }
 

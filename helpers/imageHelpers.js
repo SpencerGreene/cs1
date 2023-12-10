@@ -1,5 +1,6 @@
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LOG } from '../logConfig';
 
 // Helper function to convert blob to base64 in React Native
 export const BlobToSaveImage = (blob, contentType) => {
@@ -15,16 +16,22 @@ export const BlobToSaveImage = (blob, contentType) => {
 };
 
 export const savedImageToBlob = async (saveImage) => {
-    try {
-        const response = await fetch(`data:image/jpeg;base64,${saveImage.imageData}`);
-        const blob = await response.blob();
-        return blob;
-    } catch (error) {
-        console.error('Error converting base64 to blob:', error);
-        throw error;
+    LOG('os is', Platform.OS);
+    if (Platform.OS === 'android') {
+        return null;
+    } else {
+        try {
+            const response = await fetch(`data:image/jpeg;base64,${saveImage.imageData}`);
+            const blob = await response.blob();
+            return blob;
+        } catch (error) {
+            console.error('Error converting base64 to blob:', error);
+            throw error;
+        }
     }
 };
 
+/*
 // Function to save data to storage
 export const saveData = async (key, data) => {
     try {
@@ -93,3 +100,4 @@ export const deleteData = async (key) => {
     }
 };
 
+*/

@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useContext, useEffect, useState } from 'react';
 
-import { ERROR, LOG } from '../logConfig';
+import { ERROR, LOG, INFO } from '../logConfig';
 import { AuthContext } from '../components/AuthProvider';
 
 import BubbleApi from '../api/BubbleApi';
@@ -42,7 +42,7 @@ export default function ScoutPage() {
     const maxGameTime = () => 150 + appVariables?.game?.autoTeleSeconds;
 
     const doAction = action => {
-        LOG('action=', action);
+        INFO('action=', action);
         switch (action) {
             case ACTIONS.clearConditions:
                 break;
@@ -87,7 +87,7 @@ export default function ScoutPage() {
         const phaseUpdate = { phase: newPhase };
         const actionUpdates = actions ? actions.map(action => doAction(action)) : [];
         const updates = Object.assign(phaseUpdate, ...actionUpdates);
-        LOG({ actions, actionUpdates, updates });
+        INFO({ actions, actionUpdates, updates });
         setGameState({ ...gameState, ...updates });
     };
 
@@ -114,7 +114,6 @@ export default function ScoutPage() {
         const resultsArray = await Promise.all(keys.map(async key => {
             const { saveImage } = blobDict[key];
             const blob = await savedImageToBlob(saveImage);
-            const imageUri = URL.createObjectURL(userInfo.profileBlob);
 
             return { [key]: { saveImage, blob } };
         }));
@@ -131,7 +130,8 @@ export default function ScoutPage() {
 
         const populateAppVariables = async () => {
             if (appVariables && userInfo && appVariables.teamNumT === userInfo.teamNumT) {
-                LOG('app Variables already in memory', appVariables);
+                LOG('app Variables already in memory');
+                INFO({appVariables});
                 setStartingMatch(appVariables);
                 return;
             }
@@ -146,7 +146,8 @@ export default function ScoutPage() {
 
                 setAppVariables(parsedAppVariables);
 
-                LOG('app variables found in cache', parsedAppVariables);
+                LOG('app variables found in cache');
+                INFO({appVariables: parsedAppVariables});
                 setStartingMatch(parsedAppVariables);
             } else {
                 // If not, fetch it from the API
@@ -155,7 +156,8 @@ export default function ScoutPage() {
 
                 // Store it in AsyncStorage for future use
                 await AsyncStorage.setItem(LOCALKEYS.APPVAR, JSON.stringify(apiAppVariables));
-                LOG('app variables loaded from api', apiAppVariables);
+                LOG('app variables loaded from api');
+                INFO({appVariables: apiAppVariables});
                 setStartingMatch(apiAppVariables);
             }
         };
@@ -169,7 +171,8 @@ export default function ScoutPage() {
 
         // Store it in AsyncStorage for future use
         await AsyncStorage.setItem(LOCALKEYS.EVENT, JSON.stringify(apiEventInfo));
-        LOG('eventInfo loaded from api', apiEventInfo);
+        LOG('eventInfo loaded from api');
+        INFO({eventInfo: apiEventInfo});
     };
 
     // get eventInfo from cache or API - depends on eventKey
@@ -187,7 +190,8 @@ export default function ScoutPage() {
 
             // 1 - already in React state
             if (validEvent(eventInfo)) {
-                LOG('eventInfo already in memory', eventInfo);
+                LOG('eventInfo already in memory');
+                INFO(eventInfo);
                 return;
             }
 
@@ -195,7 +199,8 @@ export default function ScoutPage() {
             const parsedEventInfo = JSON.parse(await AsyncStorage.getItem(LOCALKEYS.EVENT));
             if (validEvent(parsedEventInfo)) {
                 setEventInfo(parsedEventInfo);
-                LOG('eventInfo found in cache', parsedEventInfo);
+                LOG('eventInfo found in cache');
+                INFO({eventInfo: parsedEventInfo});
                 return;
             }
 
@@ -218,7 +223,8 @@ export default function ScoutPage() {
 
                 if (parsedColorDict.teamNumT === userInfo.teamNumT) {
                     setColorDict(parsedColorDict);
-                    LOG('color dict found in cache', parsedColorDict);
+                    LOG('colordict found in cache');
+                    INFO(parsedColorDict);
                     return;
                 }
             }

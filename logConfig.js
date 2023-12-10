@@ -1,11 +1,8 @@
 const isDebug = true;
+const isInfo = false;
 
-function LOG(...args) {
-    if (isDebug) console.log(...args);
-}
+function LOG(...args) { if (isDebug) console.log(...args); }
+function ERROR(...args) { console.error(...args); }
+function INFO(...args) { if (isInfo) console.info(...args); }
 
-function ERROR(...args) {
-    console.error(...args);
-}
-
-export { LOG, ERROR };
+export { LOG, ERROR, INFO };
