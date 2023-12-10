@@ -11,6 +11,8 @@ import AppColors from '../styles/AppColors';
 import Styles from '../styles/Styles';
 import { PHASES } from '../config';
 import CountdownTimer from './CountdownTimer';
+import RNFetchBlob from 'react-native-fetch-blob';
+
 
 export default function Header({ gameState, maxGameTime, onTimeout }) {
     const { userInfo, logout } = useContext(AuthContext);
@@ -34,10 +36,48 @@ export default function Header({ gameState, maxGameTime, onTimeout }) {
     };
 
     useEffect(() => {
-        if (Platform.OS === 'android') return;
+        console.log('--------------> entering useEffect');
+        console.log('trying to make url for blob', userInfo.profileBlob);
 
         const makeUri = async () => {
-            const imageUri = URL.createObjectURL(userInfo.profileBlob);
+            let imageUri;
+
+            if (Platform.OS === 'android') {
+                let config;
+
+                console.log('RNFetchBlob', RNFetchBlob);
+                // console.log('fs', RNFetchBlob.fs);
+                // console.log('dirs', RNFetchBlob.fs.dirs);
+                // console.log('DocumentDir', RNFetchBlob.fs.dirs.DocumentDir);
+                
+                // try {
+                //     config = {
+                //         fileCache: true,
+                //         path: RNFetchBlob.fs.dirs.DocumentDir, // Point to the correct directory
+                //     };
+                //     console.log('Config object:', config);
+                // } catch (err) {
+                //     console.log('cannot set config object', err)
+                // }
+
+                // try {
+                //     await RNFetchBlob.config(config);
+                // } catch (err) {
+                //     console.log('cannot initialize', err);
+                // }
+
+                // let rnFetchUri;
+                // try {
+                //     rnFetchUri = await RNFetchBlob.fs.readFile(userInfo.profileBlob, 'base64');
+                // } catch (err) {
+                //     console.log('cannot fetch', err);
+                // }
+
+                // imageUri = `data:${userInfo.profileContentType};base64,${rnFetchUri}`;
+            } else {
+                imageUri = URL.createObjectURL(userInfo.profileBlob);
+            }
+
             await setProfileUri(imageUri);
         };
 
