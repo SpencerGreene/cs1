@@ -7,7 +7,7 @@ import { AuthContext } from '../components/AuthProvider';
 
 import BubbleApi from '../api/BubbleApi';
 import BlueAllianceApi from '../api/BlueAllianceApi';
-import { ACTIONS, LOCALKEYS, PHASES, CLOCKSTATES } from '../config';
+import { ACTIONS, LOCALKEYS, PHASES, CLOCKSTATES } from '../scoutConfig';
 
 import Header from '../components/Header';
 import ScoutPageSelect from './ScoutPageSelect';

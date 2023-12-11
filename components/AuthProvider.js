@@ -2,7 +2,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useEffect, useState } from 'react';
 import { LOG, INFO } from '../logConfig.js';
-import { LOCALKEYS } from '../config';
+import { LOCALKEYS } from '../scoutConfig.js';
 
 import BubbleApi from '../api/BubbleApi';
 import { savedImageToBlob } from '../helpers/imageHelpers.js';

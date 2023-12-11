@@ -9,8 +9,9 @@ import { LOG } from '../logConfig';
 
 import AppColors from '../styles/AppColors';
 import Styles from '../styles/Styles';
-import { PHASES } from '../config';
+import { PHASES } from '../scoutConfig';
 import CountdownTimer from './CountdownTimer';
+import ReactNativeBlobUtil from 'react-native-blob-util'
 
 export default function Header({ gameState, maxGameTime, onTimeout }) {
     const { userInfo, logout } = useContext(AuthContext);

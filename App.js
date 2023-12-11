@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 
 import MainPage from './pages/MainPage';
 import { AuthProvider } from './components/AuthProvider';
+import { AppRegistry } from 'react-native';
 
 export default function App() {
   return (
@@ -13,4 +14,4 @@ export default function App() {
   );
 }
 
-
+AppRegistry.registerComponent('main', () => App);

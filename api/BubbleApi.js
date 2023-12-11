@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { DATA_URL, WORKFLOW_URL } from '../config.js';
+import { DATA_URL, WORKFLOW_URL } from '../scoutConfig.js';
 import { LOG, ERROR } from '../logConfig.js';
 import { BlobToSaveImage } from '../helpers/imageHelpers.js';
 

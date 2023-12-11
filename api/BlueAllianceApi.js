@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { TBA_KEY, TBA_URL } from '../config.js';
+import { TBA_KEY, TBA_URL } from '../scoutConfig.js';
 import { ERROR } from '../logConfig.js';
 
 export default class BlueAllianceApi {
