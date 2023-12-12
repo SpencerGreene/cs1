@@ -84,7 +84,6 @@ export default function ScoutPageGame({ gameState, setGameState }) {
         const text = (
             <Text
                 style={[styles.optionText, { color: fgHexColor }]}
-                selectable={false}
             >
                 {option.name}
             </Text>
@@ -115,12 +114,12 @@ export default function ScoutPageGame({ gameState, setGameState }) {
         );
     };
 
-    const displayCondition = (cond, displayCondName) => {
+    const displayCondition = (cond, displayCondName, enabled = true) => {
         if (!cond) return (<View style={styles.conditionCol} />);
 
         const selectedOption = selections[cond.id];
 
-        const handlePress = option => {
+        const onPress = option => {
             let newSelections = { ...selections };
             if (selectedOption === option) newSelections[cond.id] = null;
             else newSelections[cond.id] = option;
@@ -133,23 +132,29 @@ export default function ScoutPageGame({ gameState, setGameState }) {
                 {displayCondName && <Text>{cond.name}</Text>}
                 {cond.options.map(option => {
                     let buttonState;
-                    if (!selectedOption) buttonState = 'active';
+                    if (!enabled) buttonState = 'inactive';
+                    else if (!selectedOption) buttonState = 'active';
                     else if (selectedOption === option) buttonState = 'selected';
                     else buttonState = 'inactive';
 
-                    return displayOption(option, buttonState, handlePress);
+                    return displayOption(option, buttonState, onPress);
                 })}
             </View>
         );
     };
 
     const displayCounterDef = def => {
+        const myConditions = def.conditions.filter(cond => cond);
+        const mySelections = myConditions.map(cond => selections[cond.id]).filter(sel => sel);
+        const enabled = mySelections.length >= myConditions.length - 1;
+        console.log({myConditions, mySelections, enabled});
+
         return (
             <View style={styles.counterRow} key={def.id}>
                 {displayCondition(counterCondition(def, "Condition 1"), def.scoutDisplayName)}
                 {displayCondition(counterCondition(def, "Condition 2"), def.scoutDisplayName)}
                 {displayCondition(counterCondition(def, "Condition 3"), def.scoutDisplayName)}
-                {displayCondition(counterCondition(def, "Trigger"), def.scoutDisplayName)}
+                {displayCondition(counterCondition(def, "Trigger"), def.scoutDisplayName, enabled)}
             </View>
         )
     };
@@ -191,6 +196,7 @@ const styles = StyleSheet.create({
     optionText: {
         fontSize: 13,
         alignSelf: 'center',
+        userSelect: 'none',
     },
     buttonImage: {
         alignSelf: 'center',
