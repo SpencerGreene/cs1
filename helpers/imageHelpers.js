@@ -1,5 +1,4 @@
 import { Platform } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LOG } from '../logConfig';
 
 // Helper function to convert blob to base64 in React Native
@@ -16,7 +15,6 @@ export const BlobToSaveImage = (blob, contentType) => {
 };
 
 export const savedImageToBlob = async (saveImage) => {
-    LOG('os is', Platform.OS);
     if (Platform.OS === 'android') {
         return null;
     } else {

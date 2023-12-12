@@ -1,5 +1,5 @@
 const isDebug = true;
-const isInfo = false;
+const isInfo = true;
 
 function LOG(...args) { if (isDebug) console.log(...args); }
 function ERROR(...args) { console.error(...args); }

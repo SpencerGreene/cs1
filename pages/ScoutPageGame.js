@@ -8,9 +8,8 @@ import AppColors from '../styles/AppColors';
 
 export default function ScoutPageGame({ gameState, setGameState }) {
     const { userInfo, appVariables, setAppVariables, colorDict } = useContext(AuthContext);
-    const { blobDict } = appVariables;
 
-    const { game } = appVariables;
+    const { game, blobDict } = appVariables;
     const { counterDefs } = game;
 
     const [uriDict, setUriDict] = useState({});
@@ -32,7 +31,7 @@ export default function ScoutPageGame({ gameState, setGameState }) {
             }
 
             setUriDict(uris);
-            console.log({uris});
+            console.log({ uris });
         };
 
         createURIs();
@@ -75,10 +74,10 @@ export default function ScoutPageGame({ gameState, setGameState }) {
     };
 
     const displayOption = option => {
-        const [bgHexColor, fgHexColor] = optionColors(option, 'active');
-        const text = (<Text style={[styles.optionText, { color: fgHexColor }]}>{option.name}</Text>);
-
         const imageUri = uriDict[option.id];
+
+        const [bgHexColor, fgHexColor] = optionColors(option, imageUri ? 'image' : 'active');
+        const text = (<Text style={[styles.optionText, { color: fgHexColor }]}>{option.name}</Text>);
         const image = (
             imageUri
             && <Image
@@ -88,7 +87,12 @@ export default function ScoutPageGame({ gameState, setGameState }) {
         );
 
         return (
-            <View style={[styles.optionContainer, { minHeight: optionContainerHeight(option) }]} key={option.id}>
+            <View
+                style={[
+                    styles.optionContainer, 
+                    { minHeight: optionContainerHeight(option) },
+                ]} 
+                key={option.id}>
                 <Pressable style={[styles.optionButton, { backgroundColor: bgHexColor }]}>
                     {image || text}
                 </Pressable>
