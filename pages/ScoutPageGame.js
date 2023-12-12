@@ -14,6 +14,9 @@ export default function ScoutPageGame({ gameState, setGameState }) {
 
     const [uriDict, setUriDict] = useState({});
 
+    // selections[condition.id]: option.id
+    const [selections, setSelections] = useState({});
+
     // create URIs from blobs when component mounts
     useEffect(() => {
         if (Platform.OS === 'android') {
@@ -31,7 +34,6 @@ export default function ScoutPageGame({ gameState, setGameState }) {
             }
 
             setUriDict(uris);
-            console.log({ uris });
         };
 
         createURIs();
@@ -73,11 +75,20 @@ export default function ScoutPageGame({ gameState, setGameState }) {
         return height1x - 10;
     };
 
-    const displayOption = option => {
+    const displayOption = (option, buttonState, handlePress) => {
         const imageUri = uriDict[option.id];
 
-        const [bgHexColor, fgHexColor] = optionColors(option, imageUri ? 'image' : 'active');
-        const text = (<Text style={[styles.optionText, { color: fgHexColor }]}>{option.name}</Text>);
+        const buttonColorState = buttonState === 'active' && imageUri ? 'image' : buttonState;
+        const [bgHexColor, fgHexColor] = optionColors(option, buttonColorState);
+
+        const text = (
+            <Text
+                style={[styles.optionText, { color: fgHexColor }]}
+                selectable={false}
+            >
+                {option.name}
+            </Text>
+        );
         const image = (
             imageUri
             && <Image
@@ -89,22 +100,45 @@ export default function ScoutPageGame({ gameState, setGameState }) {
         return (
             <View
                 style={[
-                    styles.optionContainer, 
+                    styles.optionContainer,
                     { minHeight: optionContainerHeight(option) },
-                ]} 
+                ]}
                 key={option.id}>
-                <Pressable style={[styles.optionButton, { backgroundColor: bgHexColor }]}>
+                <Pressable
+                    style={[styles.optionButton, { backgroundColor: bgHexColor }]}
+                    onPress={() => handlePress(option)}
+                    disabled={buttonState === 'inactive'}
+                >
                     {image || text}
                 </Pressable>
             </View>
         );
     };
 
-    const displayCondition = cond => {
+    const displayCondition = (cond, displayCondName) => {
+        if (!cond) return (<View style={styles.conditionCol} />);
+
+        const selectedOption = selections[cond.id];
+
+        const handlePress = option => {
+            let newSelections = { ...selections };
+            if (selectedOption === option) newSelections[cond.id] = null;
+            else newSelections[cond.id] = option;
+
+            setSelections(newSelections);
+        };
+
         return (
             <View style={styles.conditionCol}>
-                {cond && <Text>{cond.name}</Text>}
-                {cond && cond.options.map(option => displayOption(option))}
+                {displayCondName && <Text>{cond.name}</Text>}
+                {cond.options.map(option => {
+                    let buttonState;
+                    if (!selectedOption) buttonState = 'active';
+                    else if (selectedOption === option) buttonState = 'selected';
+                    else buttonState = 'inactive';
+
+                    return displayOption(option, buttonState, handlePress);
+                })}
             </View>
         );
     };
@@ -112,10 +146,10 @@ export default function ScoutPageGame({ gameState, setGameState }) {
     const displayCounterDef = def => {
         return (
             <View style={styles.counterRow} key={def.id}>
-                {displayCondition(counterCondition(def, "Condition 1"))}
-                {displayCondition(counterCondition(def, "Condition 2"))}
-                {displayCondition(counterCondition(def, "Condition 3"))}
-                {displayCondition(counterCondition(def, "Trigger"))}
+                {displayCondition(counterCondition(def, "Condition 1"), def.scoutDisplayName)}
+                {displayCondition(counterCondition(def, "Condition 2"), def.scoutDisplayName)}
+                {displayCondition(counterCondition(def, "Condition 3"), def.scoutDisplayName)}
+                {displayCondition(counterCondition(def, "Trigger"), def.scoutDisplayName)}
             </View>
         )
     };
