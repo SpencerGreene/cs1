@@ -118,20 +118,21 @@ export default function ScoutPageGame({ gameState, setGameState }) {
         );
     };
 
-    const displayCondition = cond => {
-         return (
-            <View style={styles.conditionCol}>
+    const displayCondition = (cond, index) => {
+        return (
+            <View style={styles.conditionCol} key={index}>
                 {cond && <OptionPicker
                     onOptionSelect={onOptionSelect}
                     resetSelectedOption={resetSelectedOption}
-                    choices={cond.options}
+                    options={cond.options}
                     column={cond.type}
+                    uriDict={uriDict}
                 />}
             </View>
         );
     }
 
-    const displayCounterDef = def => {
+    const displayCounterDefOld = def => {
         return (
             <View style={styles.counterRow} key={def.id}>
                 {displayCondition(counterCondition(def, "Condition 1"))}
@@ -140,6 +141,52 @@ export default function ScoutPageGame({ gameState, setGameState }) {
                 {displayCondition(counterCondition(def, "Trigger"))}
             </View>
         )
+    };
+
+    const displayCounterDef = def => {
+        // const optionPickers = [
+        //     counterCondition(def, "Condition 1"),
+        //     counterCondition(def, "Condition 2"),
+        //     counterCondition(def, "Condition 3"),
+        //     counterCondition(def, "Trigger"),
+        // ].map((cond, index) => displayCondition(cond, index));
+
+        const conditions = [
+            counterCondition(def, "Condition 1"),
+            counterCondition(def, "Condition 2"),
+            counterCondition(def, "Condition 3"),
+            counterCondition(def, "Trigger"),
+        ];
+
+        // Calculate the maximum height among conditions
+        const maxConditionHeight = Math.max(
+            conditions.map(condition => {
+                if (!condition) return 0;
+                const { options } = condition;
+                const heights = options.map(option => {
+                    if (!option.height || option.height === '1x') return 35;
+                    if (option.height === '2x') return 70;
+                    if (option.height === '3x') return 105;
+                });
+                return heights.reduce((accumulator, currentValue) => {
+                    return accumulator + currentValue;
+                }, 0);
+            }
+            ));
+
+        // Set the maximum height to all OptionPickers
+        const optionPickersWithHeight = optionPickers.map(picker =>
+            React.cloneElement(picker, { style: { ...picker.props.style, minHeight: maxOptionPickerHeight } })
+        );
+
+        return (
+            <View style={[styles.counterRow, { minHeight: maxconditionsHeight }]} key={def.id}>
+                {displayCondition(counterCondition(def, "Condition 1"))}
+                {displayCondition(counterCondition(def, "Condition 2"))}
+                {displayCondition(counterCondition(def, "Condition 3"))}
+                {displayCondition(counterCondition(def, "Trigger"))}
+            </View>
+        );
     };
 
     return (
@@ -158,6 +205,7 @@ const styles = StyleSheet.create({
     counterRow: {
         flexDirection: 'row',
         color: 'black',
+        borderWidth: 1,
     },
     conditionCol: {
         flexDirection: 'column',
