@@ -5,6 +5,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../components/AuthProvider';
 import { LOG } from '../logConfig';
 import AppColors from '../styles/AppColors';
+import OptionPicker from '../components/OptionPicker';
 
 export default function ScoutPageGame({ gameState, setGameState }) {
     const { userInfo, appVariables, setAppVariables, colorDict } = useContext(AuthContext);
@@ -46,6 +47,14 @@ export default function ScoutPageGame({ gameState, setGameState }) {
             }
         };
     }, []); // Run this effect only once when the component mounts
+
+    const onOptionSelect = (column, option) => {
+        LOG('selected', { column, option });
+    }
+
+    const resetSelectedOption = (column, option) => {
+        LOG('resetting', { column, option });
+    }
 
     // local helper functions
     const phaseCounterDefs = phase => counterDefs.filter(def => def.gamePhases.includes(phase.key));
@@ -89,9 +98,9 @@ export default function ScoutPageGame({ gameState, setGameState }) {
         return (
             <View
                 style={[
-                    styles.optionContainer, 
+                    styles.optionContainer,
                     { minHeight: optionContainerHeight(option) },
-                ]} 
+                ]}
                 key={option.id}>
                 <Pressable style={[styles.optionButton, { backgroundColor: bgHexColor }]}>
                     {image || text}
@@ -100,7 +109,7 @@ export default function ScoutPageGame({ gameState, setGameState }) {
         );
     };
 
-    const displayCondition = cond => {
+    const displayConditionOld = cond => {
         return (
             <View style={styles.conditionCol}>
                 {cond && <Text>{cond.name}</Text>}
@@ -108,6 +117,19 @@ export default function ScoutPageGame({ gameState, setGameState }) {
             </View>
         );
     };
+
+    const displayCondition = cond => {
+         return (
+            <View style={styles.conditionCol}>
+                {cond && <OptionPicker
+                    onOptionSelect={onOptionSelect}
+                    resetSelectedOption={resetSelectedOption}
+                    choices={cond.options}
+                    column={cond.type}
+                />}
+            </View>
+        );
+    }
 
     const displayCounterDef = def => {
         return (

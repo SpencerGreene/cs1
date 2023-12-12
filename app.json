@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "CookieScout",
-    "slug": "CookieScout",
+    "name": "CS",
+    "slug": "CS",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
