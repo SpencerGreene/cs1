@@ -16,6 +16,7 @@ export default function ScoutPageGame({ gameState, setGameState }) {
 
     // selections[condition.id]: option.id
     const [selections, setSelections] = useState({});
+    const [counts, setCounts] = useState([]);
 
     // create URIs from blobs when component mounts
     useEffect(() => {
@@ -51,14 +52,11 @@ export default function ScoutPageGame({ gameState, setGameState }) {
 
     // local helper functions
     const phaseCounterDefs = phase => counterDefs.filter(def => def.gamePhases.includes(phase.key));
-    const counterCondition = (def, conditionType) => {
-        const matches = def.conditions.filter(cond => cond.type === conditionType);
-        return matches.length > 0 ? matches[0] : null;
-    };
+
     const optionColors = (option, buttonState) => {
         const bgColorID = option.colorIDs[buttonState] || appVariables.defaultColorIDs[buttonState];
         const bgColor = colorDict[bgColorID];
-        const fgHexColor = bgColor.contrastColor === 'Light' ? AppColors.contrastLight : AppColors.contrastDark;
+        const fgHexColor = bgColor?.contrastColor === 'Light' ? AppColors.contrastLight : AppColors.contrastDark;
         const bgHexColor = bgColor.hexColor;
         return [bgHexColor, fgHexColor];
     };
@@ -75,7 +73,7 @@ export default function ScoutPageGame({ gameState, setGameState }) {
         return height1x - 10;
     };
 
-    const displayOption = (option, buttonState, handlePress) => {
+    const displayOption = (option, buttonState, onPress) => {
         const imageUri = uriDict[option.id];
 
         const buttonColorState = buttonState === 'active' && imageUri ? 'image' : buttonState;
@@ -105,7 +103,7 @@ export default function ScoutPageGame({ gameState, setGameState }) {
                 key={option.id}>
                 <Pressable
                     style={[styles.optionButton, { backgroundColor: bgHexColor }]}
-                    onPress={() => handlePress(option)}
+                    onPress={() => onPress(option)}
                     disabled={buttonState === 'inactive'}
                 >
                     {image || text}
@@ -114,22 +112,28 @@ export default function ScoutPageGame({ gameState, setGameState }) {
         );
     };
 
-    const displayCondition = (cond, displayCondName, enabled = true) => {
+    const displayCondition = (def, conditionType, onTrigger, enabled = true) => {
+        const conditionsThisType = def.conditions.filter(cond => cond.type === conditionType);
+        const cond = conditionsThisType.length > 0 ? conditionsThisType[0] : null;
+
         if (!cond) return (<View style={styles.conditionCol} />);
 
+        const { scoutDisplayName } = def;
         const selectedOption = selections[cond.id];
 
         const onPress = option => {
             let newSelections = { ...selections };
             if (selectedOption === option) newSelections[cond.id] = null;
             else newSelections[cond.id] = option;
+            console.log({newSelections});
 
-            setSelections(newSelections);
+            if (cond.type === 'Trigger') onTrigger(option);
+            else setSelections(newSelections);
         };
 
         return (
             <View style={styles.conditionCol}>
-                {displayCondName && <Text>{cond.name}</Text>}
+                {scoutDisplayName && <Text>{cond.name}</Text>}
                 {cond.options.map(option => {
                     let buttonState;
                     if (!enabled) buttonState = 'inactive';
@@ -147,14 +151,20 @@ export default function ScoutPageGame({ gameState, setGameState }) {
         const myConditions = def.conditions.filter(cond => cond);
         const mySelections = myConditions.map(cond => selections[cond.id]).filter(sel => sel);
         const enabled = mySelections.length >= myConditions.length - 1;
+
         console.log({myConditions, mySelections, enabled});
+
+        const onTrigger = (triggerOption) => {
+
+            LOG('trigger', {mySelections, trigger: triggerOption.name});
+        }
 
         return (
             <View style={styles.counterRow} key={def.id}>
-                {displayCondition(counterCondition(def, "Condition 1"), def.scoutDisplayName)}
-                {displayCondition(counterCondition(def, "Condition 2"), def.scoutDisplayName)}
-                {displayCondition(counterCondition(def, "Condition 3"), def.scoutDisplayName)}
-                {displayCondition(counterCondition(def, "Trigger"), def.scoutDisplayName, enabled)}
+                {displayCondition(def, "Condition 1", onTrigger)}
+                {displayCondition(def, "Condition 2", onTrigger)}
+                {displayCondition(def, "Condition 3", onTrigger)}
+                {displayCondition(def, "Trigger", onTrigger, enabled)}
             </View>
         )
     };
