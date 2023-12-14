@@ -172,27 +172,22 @@ export default function ScoutPageGame({ gameState, setGameState, maxGameTime }) 
             INFO('trigger', { counts: newGameState.counts });
         };
 
-        if (columns === 4) {
-            return (
-                <View style={styles.counterRow} key={def.id}>
-                    {displayCondition(def, "Condition 1", onTrigger)}
-                    {displayCondition(def, "Condition 2", onTrigger)}
-                    {displayCondition(def, "Condition 3", onTrigger)}
-                    {displayCondition(def, "Trigger", onTrigger, enabled)}
-                </View>
-            )
-        } else {
-            return (
-                <View style={styles.counterCol} key={def.id}>
-                    {displayCondition(def, "Trigger", onTrigger)}
-                </View>
-            )
-        }
+        return (
+            <View style={styles.counterRow} key={def.id}>
+                {columns === 4 && displayCondition(def, "Condition 1", onTrigger)}
+                {columns === 4 && displayCondition(def, "Condition 2", onTrigger)}
+                {columns === 4 && displayCondition(def, "Condition 3", onTrigger)}
+                {displayCondition(def, "Trigger", onTrigger, enabled)}
+            </View>
+        );
+
     };
 
     return (
-        <View style={styles.scoutMain4}>
-            {phaseDefs4(gameState.phase).map(def => displayCounterDef(def))}
+        <View style={styles.scoutMain}>
+            <View style={styles.scoutMain4}>
+                {phaseDefs4(gameState.phase).map(def => displayCounterDef(def))}
+            </View>
             <View style={styles.scoutMain1}>
                 {phaseDefs1(gameState.phase).map(def => displayCounterDef(def, 1))}
             </View>
@@ -202,24 +197,39 @@ export default function ScoutPageGame({ gameState, setGameState, maxGameTime }) 
 }
 
 const styles = StyleSheet.create({
-    scoutMain4: {
-        flexDirection: 'column',
+    scoutMain: {
         flex: 1,
+        flexDirection: 'column',
         minWidth: "100%",
     },
+    scoutMain4: {
+        flex: 2,
+        flexDirection: 'column',
+        minWidth: "100%",
+        borderWidth: 3,
+    },
     scoutMain1: {
+        flex: 3,
         flexDirection: 'row',
         justifyContent: 'center',
-        // flex: 1,
+        alignItems: 'flex-start',
         minWidth: "100%",
+        borderWidth: 2,
     },
     counterRow: {
         flexDirection: 'row',
         color: AppColors.bodyText,
+        borderWidth: 1,
+        borderRadius: 5,
+        borderColor: AppColors.medGray,
     },
     counterCol: {
-        flexDirection: 'row',
+        flexDirection: 'column',
         color: AppColors.bodyText,
+        borderWidth: 1,
+        borderRadius: 5,
+        borderColor: AppColors.frcRed,
+        maxHeight: 50,
     },
     conditionCol: {
         flexDirection: 'column',
