@@ -7,7 +7,7 @@ import { INFO, LOG } from '../logConfig';
 import AppColors from '../styles/AppColors';
 
 export default function ScoutPageGame({ gameState, setGameState, maxGameTime }) {
-    const { userInfo, appVariables, setAppVariables, colorDict } = useContext(AuthContext);
+    const { appVariables, colorDict } = useContext(AuthContext);
 
     const { game, blobDict } = appVariables;
     const { counterDefs } = game;
@@ -16,7 +16,6 @@ export default function ScoutPageGame({ gameState, setGameState, maxGameTime }) 
 
     // selections[condition.id]: option.id
     const [selections, setSelections] = useState({});
-    const [counts, setCounts] = useState([]);
 
     // create URIs from blobs when component mounts
     useEffect(() => {
@@ -52,6 +51,8 @@ export default function ScoutPageGame({ gameState, setGameState, maxGameTime }) 
 
     // local helper functions
     const phaseCounterDefs = phase => counterDefs.filter(def => def.gamePhases.includes(phase.key));
+    const phaseDefs4 = phase => phaseCounterDefs(phase).filter(def => def.conditions.length > 1);
+    const phaseDefs1 = phase => phaseCounterDefs(phase).filter(def => def.conditions.length === 1);
 
     const optionColors = (option, buttonState) => {
         const bgColorID = option.colorIDs[buttonState] || appVariables.defaultColorIDs[buttonState];
@@ -146,16 +147,14 @@ export default function ScoutPageGame({ gameState, setGameState, maxGameTime }) 
         );
     };
 
-    const displayCounterDef = def => {
+    const displayCounterDef = (def, columns = 4) => {
         const myConditions = def.conditions.filter(cond => cond);
         const mySelections = myConditions.map(cond => selections[cond.id]).filter(sel => sel);
-        const mySelectionsDict = mySelections.reduce((dict, sel) => { 
-            dict[sel.type]=sel.optionID;
+        const mySelectionsDict = mySelections.reduce((dict, sel) => {
+            dict[sel.type] = sel.optionID;
             return dict;
         }, {});
         const enabled = mySelections.length >= myConditions.length - 1;
-
-        // INFO({myConditions, mySelections, mySelectionsDict, enabled});
 
         const onTrigger = (triggerOption) => {
             const count = {
@@ -167,35 +166,60 @@ export default function ScoutPageGame({ gameState, setGameState, maxGameTime }) 
                 counter: def.id,
                 match_time: gameState.startTime ? maxGameTime - ((new Date() - gameState.startTime) / 1000) : 300,
             };
-            LOG('trigger', {count, mySelections, mySelectionsDict, trigger: triggerOption.name});
-        }
 
-        return (
-            <View style={styles.counterRow} key={def.id}>
-                {displayCondition(def, "Condition 1", onTrigger)}
-                {displayCondition(def, "Condition 2", onTrigger)}
-                {displayCondition(def, "Condition 3", onTrigger)}
-                {displayCondition(def, "Trigger", onTrigger, enabled)}
-            </View>
-        )
+            const newGameState = { ...gameState, counts: [...gameState.counts, count] }
+            setGameState(newGameState);
+            INFO('trigger', { counts: newGameState.counts });
+        };
+
+        if (columns === 4) {
+            return (
+                <View style={styles.counterRow} key={def.id}>
+                    {displayCondition(def, "Condition 1", onTrigger)}
+                    {displayCondition(def, "Condition 2", onTrigger)}
+                    {displayCondition(def, "Condition 3", onTrigger)}
+                    {displayCondition(def, "Trigger", onTrigger, enabled)}
+                </View>
+            )
+        } else {
+            return (
+                <View style={styles.counterCol} key={def.id}>
+                    {displayCondition(def, "Trigger", onTrigger)}
+                </View>
+            )
+        }
     };
 
     return (
-        <View style={styles.scoutMain}>
-            {phaseCounterDefs(gameState.phase).map(def => displayCounterDef(def))}
+        <View style={styles.scoutMain4}>
+            {phaseDefs4(gameState.phase).map(def => displayCounterDef(def))}
+            <View style={styles.scoutMain1}>
+                {phaseDefs1(gameState.phase).map(def => displayCounterDef(def, 1))}
+            </View>
         </View>
+
     );
 }
 
 const styles = StyleSheet.create({
-    scoutMain: {
+    scoutMain4: {
         flexDirection: 'column',
         flex: 1,
         minWidth: "100%",
     },
+    scoutMain1: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        // flex: 1,
+        minWidth: "100%",
+    },
     counterRow: {
         flexDirection: 'row',
-        color: 'black',
+        color: AppColors.bodyText,
+    },
+    counterCol: {
+        flexDirection: 'row',
+        color: AppColors.bodyText,
     },
     conditionCol: {
         flexDirection: 'column',
@@ -205,6 +229,7 @@ const styles = StyleSheet.create({
     optionContainer: {
         maxHeight: 35,
         minHeight: 35,
+        minWidth: 70,
     },
     optionButton: {
         flex: 1,

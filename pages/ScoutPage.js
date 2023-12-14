@@ -16,8 +16,6 @@ import ButtonsFwdBack from '../components/ButtonsFwdBack';
 import { savedImageToBlob } from '../helpers/imageHelpers';
 
 export default function ScoutPage() {
-    let matchTime = 998;
-
     const {
         userInfo,
         appVariables, setAppVariables,
@@ -39,6 +37,7 @@ export default function ScoutPage() {
         phaseOverride: false,
         startTime: null,
         clockState: CLOCKSTATES.hidden,
+        counts: [],
     });
 
     const maxGameTime = () => 150 + appVariables?.game?.autoTeleSeconds;
