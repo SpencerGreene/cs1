@@ -3,10 +3,10 @@ import { StyleSheet, Text, View, Image, Pressable, Platform } from 'react-native
 import React, { useContext, useEffect, useState } from 'react';
 
 import { AuthContext } from '../components/AuthProvider';
-import { LOG } from '../logConfig';
+import { INFO, LOG } from '../logConfig';
 import AppColors from '../styles/AppColors';
 
-export default function ScoutPageGame({ gameState, setGameState }) {
+export default function ScoutPageGame({ gameState, setGameState, maxGameTime }) {
     const { userInfo, appVariables, setAppVariables, colorDict } = useContext(AuthContext);
 
     const { game, blobDict } = appVariables;
@@ -119,13 +119,12 @@ export default function ScoutPageGame({ gameState, setGameState }) {
         if (!cond) return (<View style={styles.conditionCol} />);
 
         const { scoutDisplayName } = def;
-        const selectedOption = selections[cond.id];
+        const selectedOptionID = selections[cond.id]?.optionID;
 
         const onPress = option => {
             let newSelections = { ...selections };
-            if (selectedOption === option) newSelections[cond.id] = null;
-            else newSelections[cond.id] = option;
-            console.log({newSelections});
+            if (selectedOptionID === option.id) newSelections[cond.id] = null;
+            else newSelections[cond.id] = { optionID: option.id, conditionID: cond.id, type: cond.type };
 
             if (cond.type === 'Trigger') onTrigger(option);
             else setSelections(newSelections);
@@ -137,8 +136,8 @@ export default function ScoutPageGame({ gameState, setGameState }) {
                 {cond.options.map(option => {
                     let buttonState;
                     if (!enabled) buttonState = 'inactive';
-                    else if (!selectedOption) buttonState = 'active';
-                    else if (selectedOption === option) buttonState = 'selected';
+                    else if (!selectedOptionID) buttonState = 'active';
+                    else if (selectedOptionID === option.id) buttonState = 'selected';
                     else buttonState = 'inactive';
 
                     return displayOption(option, buttonState, onPress);
@@ -150,13 +149,25 @@ export default function ScoutPageGame({ gameState, setGameState }) {
     const displayCounterDef = def => {
         const myConditions = def.conditions.filter(cond => cond);
         const mySelections = myConditions.map(cond => selections[cond.id]).filter(sel => sel);
+        const mySelectionsDict = mySelections.reduce((dict, sel) => { 
+            dict[sel.type]=sel.optionID;
+            return dict;
+        }, {});
         const enabled = mySelections.length >= myConditions.length - 1;
 
-        console.log({myConditions, mySelections, enabled});
+        // INFO({myConditions, mySelections, mySelectionsDict, enabled});
 
         const onTrigger = (triggerOption) => {
-
-            LOG('trigger', {mySelections, trigger: triggerOption.name});
+            const count = {
+                condition1: mySelectionsDict['Condition 1'],
+                condition2: mySelectionsDict['Condition 2'],
+                condition3: mySelectionsDict['Condition 3'],
+                trigger: triggerOption.id,
+                game_phase: gameState.phase.display,
+                counter: def.id,
+                match_time: gameState.startTime ? maxGameTime - ((new Date() - gameState.startTime) / 1000) : 300,
+            };
+            LOG('trigger', {count, mySelections, mySelectionsDict, trigger: triggerOption.name});
         }
 
         return (

@@ -17,7 +17,6 @@ const CountdownTimer = ({ initialTime, clockState, timeoutTime, onTimeout }) => 
         if (clockState === CLOCKSTATES.running) {
             intervalRef.current = setInterval(() => {
                 setTime((prevTime) => {
-                    // if (prevTime - 1 === timeoutTime) onTimeout();
                     return prevTime - 1;
                 });
             }, 1000);

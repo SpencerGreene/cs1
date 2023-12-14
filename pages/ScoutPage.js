@@ -16,6 +16,8 @@ import ButtonsFwdBack from '../components/ButtonsFwdBack';
 import { savedImageToBlob } from '../helpers/imageHelpers';
 
 export default function ScoutPage() {
+    let matchTime = 998;
+
     const {
         userInfo,
         appVariables, setAppVariables,
@@ -81,7 +83,7 @@ export default function ScoutPage() {
                 ERROR('unknown action', action);
         }
         return {};
-    }
+    };
 
     const setPhase = (newPhase, actions) => {
         const phaseUpdate = { phase: newPhase };
@@ -258,7 +260,7 @@ export default function ScoutPage() {
             <View style={styles.scoutContainer}>
                 {gameState.phase === PHASES.select
                     ? <ScoutPageSelect gameState={gameState} setGameState={setGameState} />
-                    : <ScoutPageGame gameState={gameState} setGameState={setGameState} />
+                    : <ScoutPageGame gameState={gameState} setGameState={setGameState} maxGameTime={maxGameTime()} />
                 }
             </View>
             <ButtonsFwdBack gameState={gameState} setPhase={overridePhase} />
