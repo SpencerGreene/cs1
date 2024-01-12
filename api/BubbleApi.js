@@ -87,8 +87,10 @@ export default class BubbleApi {
         };
 
         const blobDict = {};
-        appVariables.game = await this._fetchGame(appVariables.gameID, blobDict);
+        const objDict = {};
+        appVariables.game = await this._fetchGame(appVariables.gameID, blobDict, objDict);
         appVariables.blobDict = blobDict;
+        appVariables.objDict = objDict;
         appVariables.fetchedDate = new Date();
 
         return appVariables;
@@ -186,7 +188,7 @@ export default class BubbleApi {
         }
     }
 
-    static async _fetchGame(gameID, blobDict) {
+    static async _fetchGame(gameID, blobDict, objDict = null) {
         const rawGame = await this._fetchData('game', gameID);
         let game = {
             season: rawGame.season_text,
@@ -197,14 +199,16 @@ export default class BubbleApi {
 
         const counterIDs = rawGame.counters_list_custom_counter;
         game.counterDefs = await Promise.all(
-            counterIDs.map(id => this._fetchCounterDefinition(id, blobDict))
+            counterIDs.map(id => this._fetchCounterDefinition(id, blobDict, objDict))
         );
         game.fetchedDate = new Date();
+
+        if (objDict) objDict[gameID] = {game};
 
         return game;
     }
 
-    static async _fetchCounterDefinition(counterID, blobDict) {
+    static async _fetchCounterDefinition(counterID, blobDict, objDict = null) {
         const rawCounter = await this._fetchData('counterdefinition', counterID);
         let counterDef = {
             name: rawCounter.name_text,
@@ -216,13 +220,15 @@ export default class BubbleApi {
 
         const conditionIDs = rawCounter.conditions_list_custom_gamechoice;
         counterDef.conditions = await Promise.all(
-            conditionIDs.map(id => this._fetchCounterCondition(id, blobDict))
+            conditionIDs.map(id => this._fetchCounterCondition(id, blobDict, objDict))
         );
+
+        if (objDict) objDict[counterID] = {counterDef};
 
         return counterDef;
     }
 
-    static async _fetchCounterCondition(counterConditionID, blobDict) {
+    static async _fetchCounterCondition(counterConditionID, blobDict, objDict = null) {
         const rawCondition = await this._fetchData('countercondition', counterConditionID);
         let counterCondition = {
             sortOrder: rawCondition.typesortorder_number,
@@ -234,13 +240,15 @@ export default class BubbleApi {
         const optionIDs = rawCondition.choices_list_custom_counterconditionoption;
 
         counterCondition.options = await Promise.all(
-            optionIDs.map(id => this._fetchCounterConditionOption(id, blobDict))
+            optionIDs.map(id => this._fetchCounterConditionOption(id, blobDict, objDict))
         );
+
+        if (objDict) objDict[counterConditionID] = {counterCondition};
 
         return counterCondition;
     }
 
-    static async _fetchCounterConditionOption(optionID, blobDict) {
+    static async _fetchCounterConditionOption(optionID, blobDict, objDict = null) {
         const rawOption = await this._fetchData('counterconditionoption', optionID);
         let option = {
             colorIDs: {
@@ -263,6 +271,9 @@ export default class BubbleApi {
             const saveImage = await BlobToSaveImage(blob, contentType);
             blobDict[optionID] = {blob, saveImage};
         }
+
+        if (objDict) objDict[optionID] = {option};
+
         return option;
     }
 

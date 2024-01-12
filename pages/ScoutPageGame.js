@@ -183,6 +183,15 @@ export default function ScoutPageGame({ gameState, setGameState, maxGameTime }) 
 
     };
 
+    const displayUndo = () => {
+        const { counts } = gameState;
+        const { objDict } = appVariables;
+        const counts3 = counts.slice(-3);
+        return counts3.map((count, index) => (
+            <Text key={index}>{objDict[count.trigger].option.name}</Text>
+        ));
+    }
+
     return (
         <View style={styles.scoutMain}>
             <View style={styles.scoutMain4}>
@@ -190,6 +199,9 @@ export default function ScoutPageGame({ gameState, setGameState, maxGameTime }) 
             </View>
             <View style={styles.scoutMain1}>
                 {phaseDefs1(gameState.phase).map(def => displayCounterDef(def, 1))}
+            </View>
+            <View style={styles.scoutUndo}>
+                {displayUndo()}
             </View>
         </View>
 
@@ -206,13 +218,19 @@ const styles = StyleSheet.create({
         flex: 2,
         flexDirection: 'column',
         minWidth: "100%",
-        borderWidth: 3,
+        borderWidth: 2,
     },
     scoutMain1: {
-        flex: 3,
+        flex: 2,
         flexDirection: 'row',
+        minWidth: "100%",
+        borderWidth: 2,
         justifyContent: 'center',
         alignItems: 'flex-start',
+    },
+    scoutUndo: {
+        flex: 1,
+        flexDirection: 'column',
         minWidth: "100%",
         borderWidth: 2,
     },
