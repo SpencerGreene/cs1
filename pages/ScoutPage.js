@@ -126,7 +126,12 @@ export default function ScoutPage() {
     // get appVariables from cache or api
     useEffect(() => {
         const setStartingMatch = appVar => {
-            setGameState({ ...gameState, matchType: appVar.defaultMatchType, matchNumber: appVar.defaultMatchNum });
+
+            setGameState({ ...gameState, 
+                matchType: appVar.defaultMatchType, 
+                matchNumber: appVar.defaultMatchNum,
+                scoutSelectionValid: appVar.defaultMatchType === 'Practice'
+            });
         };
 
         const populateAppVariables = async () => {
