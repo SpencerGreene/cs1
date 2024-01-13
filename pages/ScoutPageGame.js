@@ -16,6 +16,7 @@ export default function ScoutPageGame({ gameState, setGameState, maxGameTime }) 
 
     // selections[condition.id]: option.id
     const [selections, setSelections] = useState({});
+    const [flashing, setFlashing] = useState([]);
 
     // create URIs from blobs when component mounts
     useEffect(() => {
@@ -137,6 +138,7 @@ export default function ScoutPageGame({ gameState, setGameState, maxGameTime }) 
                 {cond.options.map(option => {
                     let buttonState;
                     if (!enabled) buttonState = 'inactive';
+                    else if (flashing.includes(option.id)) buttonState = 'flash';
                     else if (!selectedOptionID) buttonState = 'active';
                     else if (selectedOptionID === option.id) buttonState = 'selected';
                     else buttonState = 'inactive';
@@ -146,6 +148,13 @@ export default function ScoutPageGame({ gameState, setGameState, maxGameTime }) 
             </View>
         );
     };
+
+    const flash = (conditions, msec) => {
+        setFlashing([...flashing, ...conditions]);
+        setTimeout((conditions) => {
+            setFlashing(flashing.filter(cond => !conditions.includes(cond)));
+        }, msec);
+    }
 
     const displayCounterDef = (def, columns = 4) => {
         const myConditions = def.conditions.filter(cond => cond);
@@ -166,9 +175,13 @@ export default function ScoutPageGame({ gameState, setGameState, maxGameTime }) 
                 counter: def.id,
                 match_time: gameState.startTime ? maxGameTime - ((new Date() - gameState.startTime) / 1000) : 300,
             };
+            count.conditions = 
+                [ count.condition1, count.condition2, count.condition3, count.trigger ]
+                .filter(cond => cond !== undefined);
 
             const newGameState = { ...gameState, counts: [...gameState.counts, count] }
             setGameState(newGameState);
+            flash(count.conditions, 200);
             INFO('trigger', { counts: newGameState.counts });
         };
 
