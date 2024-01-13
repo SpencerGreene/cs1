@@ -4,6 +4,8 @@ export const DATA_URL = 'https://cookiescout2.bubbleapps.io/version-test/api/1.1
 export const TBA_KEY = 'QMX6lOKtgvG1vLLPDSt2yvsPCVNV77FOFXreWkcMX3WXv0CSPH8EiBeuD3gjWAvL';
 export const TBA_URL = 'https://www.thebluealliance.com/api/v3';
 
+export const FLASH_MSEC = 200;
+
 export const LOCALKEYS = {
     APPVAR: 'appVariables',
     COLORDICT: 'colorDict',
@@ -14,7 +16,7 @@ export const LOCALKEYS = {
 export const ACTIONS = {
     makeScout: 'makeScout',
     clearMatchTeam: 'clearMatchTeam',
-    clearConditions: 'clearConditions',
+    clearAllConditions: 'clearAllConditions',
     reloadMaxed: 'reloadMaxed',
     deleteCounts: 'deleteCounts',
     deleteScout: 'deleteScout',
@@ -48,7 +50,7 @@ export const PHASES = {
         forwardLabel: 'Confirm selection >>>',
         forwardActions: [
             ACTIONS.makeScout, ACTIONS.resetClock,
-            ACTIONS.clearConditions, ACTIONS.clearPhaseOverride
+            ACTIONS.clearAllConditions, ACTIONS.clearPhaseOverride
         ],
         showClock: false,
     },
@@ -74,7 +76,7 @@ export const PHASES = {
         key: 'Auto',
         backLabel: '<<< Pregame',
         backActions: [
-            ACTIONS.clearConditions, ACTIONS.clearPhaseOverride,
+            ACTIONS.clearAllConditions, ACTIONS.clearPhaseOverride,
             ACTIONS.reloadMaxed, ACTIONS.resetClock,
         ],
         forwardLabel: 'Teleop >>>',
@@ -112,7 +114,7 @@ export const PHASES = {
         backActions: [ACTIONS.reloadMaxed],
         forwardLabel: 'Submit',
         forwardActions: [ACTIONS.submit, ACTIONS.incrementMatchNum,
-        ACTIONS.clearConditions, ACTIONS.clearPhaseOverride,
+        ACTIONS.clearAllConditions, ACTIONS.clearPhaseOverride,
         ],
         endTime: -80, // 60 seconds after submit, auto submit
         showClock: false,

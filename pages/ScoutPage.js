@@ -42,16 +42,19 @@ export default function ScoutPage() {
 
     const maxGameTime = () => 150 + appVariables?.game?.autoTeleSeconds;
 
-    const doAction = action => {
+    const resolveAction = action => {
         INFO('action=', action);
         switch (action) {
-            case ACTIONS.clearConditions:
+            case ACTIONS.clearAllConditions:
+                // TODO
                 break;
             case ACTIONS.clearMatchTeam:
                 return { scoutTeamNumT: null, allianceColor: null };
             case ACTIONS.deleteCounts:
+                // TODO
                 break;
             case ACTIONS.deleteScout:
+                // TODO
                 break;
             case ACTIONS.incrementMatchNum:
                 const matchNumber = gameState.matchNumber + 1;
@@ -62,8 +65,10 @@ export default function ScoutPage() {
                 BubbleApi.apiSetDefaultMatchNumber(matchNumber);
                 return { matchNumber };
             case ACTIONS.makeScout:
+                // TODO
                 break;
             case ACTIONS.reloadMaxed:
+                // TODO
                 break;
             case ACTIONS.startClock:
                 return { startTime: new Date(), clockState: CLOCKSTATES.running };
@@ -73,6 +78,7 @@ export default function ScoutPage() {
                 // CountdownTimer resets automatically when state is stopped
                 return { startTime: null, clockState: CLOCKSTATES.stopped };
             case ACTIONS.submit:
+                // TODO
                 break;
             case ACTIONS.clearPhaseOverride:
                 return { phaseOverride: false };
@@ -86,7 +92,7 @@ export default function ScoutPage() {
 
     const setPhase = (newPhase, actions) => {
         const phaseUpdate = { phase: newPhase };
-        const actionUpdates = actions ? actions.map(action => doAction(action)) : [];
+        const actionUpdates = actions ? actions.map(action => resolveAction(action)) : [];
         const updates = Object.assign(phaseUpdate, ...actionUpdates);
         INFO({ actions, actionUpdates, updates });
         setGameState({ ...gameState, ...updates });
@@ -95,7 +101,7 @@ export default function ScoutPage() {
     const overridePhase = (newPhase, actions) => {
         const allActions = [ACTIONS.setPhaseOverride, ...actions];
         setPhase(newPhase, allActions);
-    }
+    };
 
     // get lastChanged from api - TODO refresh other info if it's stale
     useEffect(() => {

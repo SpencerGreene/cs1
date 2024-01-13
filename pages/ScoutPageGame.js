@@ -5,6 +5,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../components/AuthProvider';
 import { INFO, LOG } from '../logConfig';
 import AppColors from '../styles/AppColors';
+import { FLASH_MSEC } from '../config';
 
 export default function ScoutPageGame({ gameState, setGameState, maxGameTime }) {
     const { appVariables, colorDict } = useContext(AuthContext);
@@ -153,6 +154,9 @@ export default function ScoutPageGame({ gameState, setGameState, maxGameTime }) 
         setFlashing([...flashing, ...conditions]);
         setTimeout((conditions) => {
             setFlashing(flashing.filter(cond => !conditions.includes(cond)));
+            // TODO - narrow to only this condition
+            INFO({selections});
+            setSelections({});
         }, msec);
     }
 
@@ -166,6 +170,8 @@ export default function ScoutPageGame({ gameState, setGameState, maxGameTime }) 
         const enabled = mySelections.length >= myConditions.length - 1;
 
         const onTrigger = (triggerOption) => {
+            // the 'conditions' are actually selection option IDs.
+            // using the name 'condition' here to match the Bubble data model for Count.
             const count = {
                 condition1: mySelectionsDict['Condition 1'],
                 condition2: mySelectionsDict['Condition 2'],
@@ -177,12 +183,15 @@ export default function ScoutPageGame({ gameState, setGameState, maxGameTime }) 
             };
             count.conditions = 
                 [ count.condition1, count.condition2, count.condition3, count.trigger ]
-                .filter(cond => cond !== undefined);
+                .filter(cond => cond);
 
             const newGameState = { ...gameState, counts: [...gameState.counts, count] }
             setGameState(newGameState);
-            flash(count.conditions, 200);
-            INFO('trigger', { counts: newGameState.counts });
+            flash(count.conditions, FLASH_MSEC);
+            
+            // TODO narrow this to only the current condition
+
+            INFO('trigger', { counts: newGameState.counts, flash: count.conditions });
         };
 
         return (
