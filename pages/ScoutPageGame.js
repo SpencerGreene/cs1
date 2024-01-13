@@ -152,11 +152,17 @@ export default function ScoutPageGame({ gameState, setGameState, maxGameTime }) 
 
     const flash = (conditions, msec) => {
         setFlashing([...flashing, ...conditions]);
-        setTimeout((conditions) => {
+        setTimeout(() => {
             setFlashing(flashing.filter(cond => !conditions.includes(cond)));
             // TODO - narrow to only this condition
-            INFO({selections});
-            setSelections({});
+
+            const newSelections = Object.fromEntries(
+                Object.entries(selections)
+                .filter(([conditionID, selection]) => !conditions.includes(selection.optionID))
+            )
+            INFO({selections, newSelections, conditions});
+
+            setSelections(newSelections);
         }, msec);
     }
 
